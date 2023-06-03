@@ -124,7 +124,7 @@ function getResourceImg(resourceType) {
 }
 
 function renderPlayerCell(player) {
-    console.log("[INFO] Attempting to render palyer ", player, "in", player_colors[player]);
+    console.log("Attempting to render palyer ", player, "in", player_colors[player]);
     return `
         <div class="explorer-tbl-player-col-cell-color" style="background-color:${player_colors[player]}"></div>
         <span class="explorer-tbl-player-name" style="color:${player_colors[player]}">${player}</span>
@@ -253,10 +253,11 @@ function parseInitialGotMessage(pElement) {
 function parseGotMessage(pElement) {
     var textContent = pElement.textContent;
     if (textContent.includes(receivedResourcesSnippet)) {
+        console.log("Found gotMessage. Parsing...");
 	    var player = textContent.replace(receivedResourcesSnippet, "").split(" ")[0];
 	    if (!resources[player]) {
-		console.log("Failed to parse player...", player, resources);
-		return;
+            console.log("Failed to parse player...", player, resources);
+            return;
 	    }
 	    var images = collectionToArray(pElement.getElementsByTagName('img'));
 	    var gotAny = false;
@@ -683,11 +684,15 @@ function parseLatestMessages() {
     var allMessages = getAllMessages();
     var newOffset = allMessages.length;
     var newMessages = allMessages.slice(MSG_OFFSET);
-    console.log("New offset:", newOffset);
+//    console.log("New offset:", newOffset);
     if (MSG_OFFSET === newOffset)
-    	console.log("Parsin new message(s)...");
+    {
+    	console.log("No new message");
+    }
     else
-    	console.log("[INFO] No new message");
+    {
+    	console.log("Parsing new message(s)...");
+    }
 
     ALL_PARSERS.forEach(parser => newMessages.forEach((msg, idx) => {
         var prevMessage = idx > 0 ? newMessages[idx - 1] : allMessages[MSG_OFFSET - 1];
@@ -743,7 +748,7 @@ function recognizeUsers() {
         }
         else
         {
-        	console.log("[INFO] Skip re-recognizing existing user", username);
+        	console.log("Skip re-recognizing existing user", username);
         }
         
     }
@@ -800,7 +805,7 @@ function waitForInitialPlacement() {
 //            }
             else
             {
-            	console.log("[INFO] Initial placement done snippet not found");
+            	console.log("Initial placement done snippet not found");
             }
         }
     }, 2000);
