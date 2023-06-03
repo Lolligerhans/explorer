@@ -631,15 +631,18 @@ function parseStealIncludingYou(pElement, prevElement)
 
     // Obtain player names
     var involvedPlayers = textContent
-        .replace(":", "")   // One version has an extra colon
-        .replace(" stole:  from ", " ") // After this only the names are left
+        .replace(/:/, "")   // One version has an extra colon
+        .replace(" stole  from ", " ") // After this only the names are left
         .split(" ");
 
     // Replace player name
     for (p of involvedPlayers)
     {
         if (p === "You" || p === "you")
+        {
             p = configPlayerName;
+            console.log(p, "-- that's you!");
+        }
     }
 
     // Sanity check
@@ -647,8 +650,8 @@ function parseStealIncludingYou(pElement, prevElement)
     var targetPlayer = involvedPlayers[1];
     if (!resources[stealingPlayer] || !resources[targetPlayer])
     {
-        console.log("[ERROR] Failed to steal. Invalid parse of players:",
-                    stealingPlayer, targetPlayer, resources);
+        console.log("[ERROR] Failed to steal. Invalid parse of player(s):",
+                    stealingPlayer, "|", targetPlayer, "|", resources);
         alert(3);
         return;
     }
