@@ -124,7 +124,7 @@ function getResourceImg(resourceType) {
 }
 
 function renderPlayerCell(player) {
-    console.log("[INFO] Attempting to render palyer ", player, "in", player_colours[player]);
+    console.log("[INFO] Attempting to render palyer ", player, "in", player_colors[player]);
     return `
         <div class="explorer-tbl-player-col-cell-color" style="background-color:${player_colors[player]}"></div>
         <span class="explorer-tbl-player-name" style="color:${player_colors[player]}">${player}</span>
