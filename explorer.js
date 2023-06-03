@@ -3,9 +3,10 @@ console.log("STARTED...");
 
 var logElement;
 var initialPlacementMade = false;
-var initialPlacementDoneMessage = "Giving out starting resources";
+//var initialPlacementDoneMessage = "Giving out starting resources";
 var initialPlacementDoneSnippet = "rolled";
 var placeInitialSettlementSnippet = "placed a"; // Normal building uses the word "built", not "placed"
+var reviecedInitialResourcesSnippet: "received starting resources:";
 var receivedResourcesSnippet = "got:";
 var builtSnippet = "built a";
 var boughtSnippet = " bought ";
@@ -206,30 +207,68 @@ function render() {
 
 /**
 * Process a "got resource" message: [user icon] [user] got: ...[resource images]
+* Or equivalent initial ressource message		
 */
 function parseGotMessage(pElement) {
     var textContent = pElement.textContent;
-    if (!textContent.includes(receivedResourcesSnippet)) {
-        return;
+    if (textContent.includes(receivedResourcesSnippet)) {
+	    var player = textContent.replace(receivedResourcesSnippet, "").split(" ")[0];
+	    if (!resources[player]) {
+		console.log("Failed to parse player...", player, resources);
+		return;
+	    }
+	    var images = collectionToArray(pElement.getElementsByTagName('img'));
+	    var gotAny = false;
+	    for (var img of images) {
+		if (img.src.includes("card_wool")) {
+		    resources[player][sheep] += 1;
+		    gotAny = true;
+		} else if (img.src.includes("card_lumber")) {
+		    resources[player][wood] += 1;
+		    gotAny = true;
+		} else if (img.src.includes("card_brick")) {
+		    resources[player][brick] += 1;
+		    gotAny = true;
+		} else if (img.src.includes("card_ore")) {
+		    resources[player][stone] += 1;
+		    gotAny = true;
+		} else if (img.src.includes("card_grain")) {
+		    resources[player][wheat] += 1;
+		    gotAny = true;
+		}
+	    }
+	    if (gotAny === false)
+	    	console.log("[WARNING] Parsed initial ressource message with no ressources.");
     }
-    var player = textContent.replace(receivedResourcesSnippet, "").split(" ")[0];
-    if (!resources[player]) {
-        console.log("Failed to parse player...", player, resources);
-        return;
-    }
-    var images = collectionToArray(pElement.getElementsByTagName('img'));
-    for (var img of images) {
-        if (img.src.includes("card_wool")) {
-            resources[player][sheep] += 1;
-        } else if (img.src.includes("card_lumber")) {
-            resources[player][wood] += 1;
-        } else if (img.src.includes("card_brick")) {
-            resources[player][brick] += 1;
-        } else if (img.src.includes("card_ore")) {
-            resources[player][stone] += 1; 
-        } else if (img.src.includes("card_grain")) {
-            resources[player][wheat] += 1;
-        }
+    else if (text.Content.includes(receivedInitialResourcesSnipped))
+    {
+    	    var player = textContent.replace(receivedInitialResourcesSnipped, "").split(" ")[0];
+	    if (!resources[player]) {
+		console.log("Failed to parse player (initial ressources)...", player, resources);
+		return;
+	    }
+	    var images = collectionToArray(pElement.getElementsByTagName('img'));
+	    var gotAny = false;
+	    for (var img of images) {
+		if (img.src.includes("card_wool")) {
+		    resources[player][sheep] += 1;
+		    gotAny = true;
+		} else if (img.src.includes("card_lumber")) {
+		    resources[player][wood] += 1;
+		    gotAny = true;
+		} else if (img.src.includes("card_brick")) {
+		    resources[player][brick] += 1;
+		    gotAny = true;
+		} else if (img.src.includes("card_ore")) {
+		    resources[player][stone] += 1; 
+		    gotAny = true;
+		} else if (img.src.includes("card_grain")) {
+		    resources[player][wheat] += 1;
+		    gotAny = true;
+		}
+	    }
+	    if (gotAny === false)
+	    	console.log("[WARNING] Parsed initial ressource message with no ressources.");
     }
 }
 
@@ -654,6 +693,7 @@ function startWatchingMessages() {
 * Log initial resource distributions.
 */
 function tallyInitialResources() {
+	console.log("START tallyInitialResources()");
     var allMessages = getAllMessages();
     MSG_OFFSET = allMessages.length;
     allMessages.forEach(parseGotMessage);
@@ -673,7 +713,7 @@ function recognizeUsers() {
     for (var msg of placementMessages) {
         msg_text = msg.textContent;
         username = msg_text.replace(placeInitialSettlementSnippet, "").split(" ")[0];
-        console.log(username);
+//        console.log(username);
         if (!resources[username]) {
             players.push(username);
             console.log("Adding user", username);
@@ -688,7 +728,7 @@ function recognizeUsers() {
         }
         else
         {
-        	console.log("[WARNING] Skip recognizing user", username);
+        	console.log("[INFO] Skip re-recognizing existing user", username);
         }
         
     }
