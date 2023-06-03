@@ -142,6 +142,7 @@ function shouldRenderTable(...deps) {
 */
 function render() {
     if (!shouldRenderTable(resources, thefts)) {
+    	console.log("not rendering");
         return;
     }
 
@@ -198,6 +199,8 @@ function render() {
     body.appendChild(tbl);
     // tbl border attribute to 
     tbl.setAttribute("border", "2");
+    
+    console.log("rendering done hopefully");
 }
 
 /**
@@ -629,12 +632,16 @@ function parseLatestMessages() {
         parser(msg, prevMessage);
     }));
     MSG_OFFSET = newOffset;
+    if (MSG_OFFSET == newOFfset)
+    	console.log("Parsed new messages");
+    else
+    	console.log("[INFO] No new messages");
     reviewThefts();
     render();
 }
 
 function startWatchingMessages() {
-    setInterval(parseLatestMessages, 500);
+    setInterval(parseLatestMessages, 2000);
 }
 
 /**
@@ -688,7 +695,7 @@ function loadCounter() {
     setTimeout(() => {
         recognizeUsers();
         tallyInitialResources();
-    }, 500); // wait for inital resource distribution to be logged
+    }, 2000); // wait for inital resource distribution to be logged
 }
 
 function getAllMessages() {
@@ -716,7 +723,7 @@ function waitForInitialPlacement() {
                 initialPlacementMade = true;
             }
         }
-    }, 500);
+    }, 2000);
 }
 
 /**
