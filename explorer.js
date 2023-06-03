@@ -41,6 +41,28 @@ var thefts = [];
 var solved_thefts = [];
 
 
+function addStylesheet()
+{
+  var cssId = 'explorerStylesheet';  // you could encode the css path itself to generate id..
+  if (!document.getElementById(cssId))
+  {
+    var head  = document.getElementsByTagName('head')[0];
+    var link  = document.createElement('link');
+    link.id   = cssId;
+    link.rel  = 'stylesheet';
+    link.type = 'text/css';
+    link.href = 'github/explorer/styles.css'
+//    link.href = 'http://website.example/css/stylesheet.css';
+    link.media = 'all';
+    head.appendChild(link);
+    conosole.log("Added explorer stylesheet");
+  }
+  else
+  {
+    console.log("[WARNING] Explorer stylesheet already found");
+  }
+}
+
 // First, delete the discord signs
 function deleteDiscordSigns() {
     var allPageImages = document.getElementsByTagName('img'); 
@@ -708,9 +730,10 @@ function findTranscription() {
             waitForInitialPlacement();
         } else {
             logElement = document.getElementById("game-log-text");
+            console.log("game-log-text found");
         }
-    }, 500);
+    }, 2000);
 }
 
-
+addStylesheet();
 findTranscription();
