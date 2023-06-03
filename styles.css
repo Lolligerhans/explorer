@@ -7,7 +7,7 @@
 
 #explorer-tbl {
     position: absolute;
-    background-color: white;
+    background-color: gray;
     z-index: 9999;
     top: 10px;
     left: 10px;
@@ -35,7 +35,7 @@
 .explorer-tbl-cell {
     border: none;
     box-sizing: unset;
-    color: "black";
+    color: black;
     padding: 0 2px;
     text-align: center;
     line-height: 3em;
