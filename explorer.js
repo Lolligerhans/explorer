@@ -687,7 +687,7 @@ function parseLatestMessages() {
 //    console.log("New offset:", newOffset);
     if (MSG_OFFSET === newOffset)
     {
-    	console.log("No new message");
+//    	console.log("No new message");
     }
     else
     {
