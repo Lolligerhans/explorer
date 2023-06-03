@@ -761,14 +761,38 @@ function recognizeUsers() {
     var placementMessages = getAllMessages()
     .filter(msg => msg.textContent.includes(placeInitialSettlementSnippet));
 //    console.log("total placement messages found (we search for users here):", placementMessages.length);
-    for (var msg of placementMessages) {
+    for (var msg of placementMessages)
+    {
+        // Message starts with player name
         msg_text = msg.textContent;
         username = msg_text.replace(placeInitialSettlementSnippet, "").split(" ")[0];
 //        console.log(username);
-        if (!resources[username]) {
+
+        if (!resources[username])
+        {
             players.push(username);
 //            console.log("Adding user", username);
-            player_colors[username] = msg.style.color;
+
+            // Check settle image for a colour
+            var images = collectionToArray(msg.getElementByTagName("img"));
+            for (var image of images)
+            {
+                var str = img.src;
+                // Settlement is placed first, so we assume we find it before
+                // the road. Example HTML:
+                //  <img src="/dist/images/road_blue.svg?v159" alt="road" class="lobby-chat-text-icon" width="20" height="20">
+                var front = "settlement_";
+                var back = ".svg";
+                var colorName = str.substring(
+                    str.indexOf(front) + front.length + 1,  // skip underscore too
+                    str.indexOf(back) // Images are .svg currently
+                );
+                // We assume that the colorName string is a valid colour word
+                player_colors[username] = colorName;
+            }
+//            player_colors[username] = msg.style.color;
+
+            // Empty resources
             resources[username] = {
                 [wood ]: 0,
                 [ore]: 0,
