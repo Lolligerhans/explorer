@@ -36,6 +36,7 @@
     border: none;
     box-sizing: unset;
     color: black;
+    font-weight: bold;
     padding: 0 2px;
     text-align: center;
     line-height: 3em;
