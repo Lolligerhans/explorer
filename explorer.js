@@ -661,7 +661,10 @@ function parseStealIncludingYou(pElement, prevElement)
 }
 
 /**
- * Steals
+ * Handles messages with steals that do not include the player.
+ *
+ * In this type of steal, the player names are given directly, but the resource
+ * is unknown.
  */
 function parseStealFromOtherPlayers(pElement, prevElement)
 {
@@ -871,8 +874,11 @@ var ALL_PARSERS = [
     parseStoleAllOfMessage,
     parseDiscardedMessage,
     parseTradedMessage,
-    parseStoleFromYouMessage,
-    parseStoleUnknownMessage,
+    // TODO These are the old, retired steal parsers
+    parseStealFromOtherPlayer,
+    parseStealIncludingYou,
+//    parseStoleFromYouMessage,
+//    parseStoleUnknownMessage,
 ];
 
 /**
