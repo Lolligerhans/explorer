@@ -222,25 +222,28 @@ function parseInitialGotMessage(pElement) {
 	    var images = collectionToArray(pElement.getElementsByTagName('img'));
 	    var gotAny = false;
 	    for (var img of images) {
-		if (img.src.includes("card_wool")) {
-		    resources[player][sheep] += 1;
-		    gotAny = true;
-		} else if (img.src.includes("card_lumber")) {
-		    resources[player][wood] += 1;
-		    gotAny = true;
-		} else if (img.src.includes("card_brick")) {
-		    resources[player][brick] += 1;
-		    gotAny = true;
-		} else if (img.src.includes("card_ore")) {
-		    resources[player][ore] += 1; 
-		    gotAny = true;
-		} else if (img.src.includes("card_grain")) {
-		    resources[player][wheat] += 1;
-		    gotAny = true;
-		}
+            if (img.src.includes("card_wool")) {
+                resources[player][sheep] += 1;
+                gotAny = true;
+            } else if (img.src.includes("card_lumber")) {
+                resources[player][wood] += 1;
+                gotAny = true;
+            } else if (img.src.includes("card_brick")) {
+                resources[player][brick] += 1;
+                gotAny = true;
+            } else if (img.src.includes("card_ore")) {
+                resources[player][ore] += 1; 
+                gotAny = true;
+            } else if (img.src.includes("card_grain")) {
+                resources[player][wheat] += 1;
+                gotAny = true;
+            }
 	    }
 	    if (gotAny === false)
+        {
 	    	console.log("[WARNING] Parsed initial ressource message with no ressources.");
+            alert(1);
+        }
     }
 }
 
@@ -258,25 +261,28 @@ function parseGotMessage(pElement) {
 	    var images = collectionToArray(pElement.getElementsByTagName('img'));
 	    var gotAny = false;
 	    for (var img of images) {
-		if (img.src.includes("card_wool")) {
-		    resources[player][sheep] += 1;
-		    gotAny = true;
-		} else if (img.src.includes("card_lumber")) {
-		    resources[player][wood] += 1;
-		    gotAny = true;
-		} else if (img.src.includes("card_brick")) {
-		    resources[player][brick] += 1;
-		    gotAny = true;
-		} else if (img.src.includes("card_ore")) {
-		    resources[player][ore] += 1;
-		    gotAny = true;
-		} else if (img.src.includes("card_grain")) {
-		    resources[player][wheat] += 1;
-		    gotAny = true;
-		}
+            if (img.src.includes("card_wool")) {
+                resources[player][sheep] += 1;
+                gotAny = true;
+            } else if (img.src.includes("card_lumber")) {
+                resources[player][wood] += 1;
+                gotAny = true;
+            } else if (img.src.includes("card_brick")) {
+                resources[player][brick] += 1;
+                gotAny = true;
+            } else if (img.src.includes("card_ore")) {
+                resources[player][ore] += 1;
+                gotAny = true;
+            } else if (img.src.includes("card_grain")) {
+                resources[player][wheat] += 1;
+                gotAny = true;
+            }
 	    }
 	    if (gotAny === false)
+        {
 	    	console.log("[WARNING] Parsed initial ressource message with no ressources.");
+            alert(1);
+        }
     }
 }
 
