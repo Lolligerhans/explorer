@@ -875,7 +875,7 @@ var ALL_PARSERS = [
     parseDiscardedMessage,
     parseTradedMessage,
     // TODO These are the old, retired steal parsers
-    parseStealFromOtherPlayer,
+    parseStealFromOtherPlayers, // TODO rename pair to stealKnwon vs. stealUnknown
     parseStealIncludingYou,
 //    parseStoleFromYouMessage,
 //    parseStoleUnknownMessage,
@@ -953,7 +953,7 @@ function recognizeUsers() {
 //            console.log("Adding user", username);
 
             // Check settle image for a colour
-            var images = collectionToArray(msg.getElementByTagName("img"));
+            var images = collectionToArray(msg.getElementsByTagName("img"));
             for (var image of images)
             {
                 var str = img.src;
