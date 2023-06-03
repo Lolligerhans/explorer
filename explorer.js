@@ -5,7 +5,7 @@ var logElement;
 var initialPlacementMade = false;
 var initialPlacementDoneMessage = "Giving out starting resources";
 var initialPlacementDoneSnippet = "rolled";
-var placeInitialSettlementSnippet = "turn to place";
+var placeInitialSettlementSnippet = "placed a"; // Normal building uses the word "built", not "placed"
 var receivedResourcesSnippet = "got:";
 var builtSnippet = "built a";
 var boughtSnippet = " bought ";
@@ -669,7 +669,7 @@ function tallyInitialResources() {
 function recognizeUsers() {
     var placementMessages = getAllMessages()
     .filter(msg => msg.textContent.includes(placeInitialSettlementSnippet));
-    console.log("total placement messages", placementMessages.length);
+    console.log("total placement messages found:", placementMessages.length);
     for (var msg of placementMessages) {
         msg_text = msg.textContent;
         username = msg_text.replace(placeInitialSettlementSnippet, "").split(" ")[0];
@@ -686,6 +686,11 @@ function recognizeUsers() {
                 [sheep]: 0,
             };
         }
+        else
+        {
+        	console.log("[WARNING] Skip recognizing user", username);
+        }
+        
     }
 }
 
