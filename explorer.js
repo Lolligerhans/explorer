@@ -634,6 +634,7 @@ function parseStealIncludingYou(pElement, prevElement)
         .replace(/:/, "")   // One version has an extra colon
         .replace(" stole  from ", " ") // After this only the names are left
         .split(" ");
+    console.log(involvedPlayers);
 
     // Replace player name
     for (p of involvedPlayers)
@@ -648,6 +649,7 @@ function parseStealIncludingYou(pElement, prevElement)
     // Sanity check
     var stealingPlayer = involvedPlayers[0];
     var targetPlayer = involvedPlayers[1];
+    console.log("Steal between", stealingPlayer, "and", targetPlayer);
     if (!resources[stealingPlayer] || !resources[targetPlayer])
     {
         console.log("[ERROR] Failed to steal. Invalid parse of player(s):",
@@ -892,13 +894,16 @@ function parseLatestMessages() {
     var newOffset = allMessages.length;
     var newMessages = allMessages.slice(MSG_OFFSET);
 //    console.log("New offset:", newOffset);
-    if (MSG_OFFSET === newOffset)
+    if (false)
     {
-//    	console.log("No new message");
-    }
-    else
-    {
-    	console.log("Parsing new message(s)...");
+        if (MSG_OFFSET === newOffset)
+        {
+            console.log("No new message");
+        }
+        else
+        {
+            console.log("Parsing new message(s)...");
+        }
     }
 
     ALL_PARSERS.forEach(parser => newMessages.forEach((msg, idx) => {
@@ -906,7 +911,6 @@ function parseLatestMessages() {
         var prevMessage = idx > 0 ? newMessages[idx - 1] : allMessages[MSG_OFFSET - 1];
         parser(msg, prevMessage);
     }));
-
 
     MSG_OFFSET = newOffset;
     reviewThefts();
