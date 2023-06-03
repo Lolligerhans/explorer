@@ -21,12 +21,12 @@ var stoleFromYouSnippet = "stole:";
 var stoleFromSnippet = " stole  from: "; // extra space from icon
 
 var wood = "wood";
-var stone = "stone";
+var ore = "ore";
 var wheat = "wheat";
 var brick = "brick";
 var sheep = "sheep";
 var resourceTypes = [wood, brick, sheep, wheat, ore];
-//var resourceTypes = [wood, stone, wheat, brick, sheep];
+//var resourceTypes = [wood, ore, wheat, brick, sheep];
 
 // Players
 var players = [];
@@ -106,7 +106,7 @@ function getResourceImg(resourceType) {
         case wheat:
             img_name = "card_grain";
             break;
-        case stone:
+        case ore:
             img_name = "card_ore";
             break;
         case sheep:
@@ -231,7 +231,7 @@ function parseInitialGotMessage(pElement) {
 		    resources[player][brick] += 1;
 		    gotAny = true;
 		} else if (img.src.includes("card_ore")) {
-		    resources[player][stone] += 1; 
+		    resources[player][ore] += 1; 
 		    gotAny = true;
 		} else if (img.src.includes("card_grain")) {
 		    resources[player][wheat] += 1;
@@ -267,7 +267,7 @@ function parseGotMessage(pElement) {
 		    resources[player][brick] += 1;
 		    gotAny = true;
 		} else if (img.src.includes("card_ore")) {
-		    resources[player][stone] += 1;
+		    resources[player][ore] += 1;
 		    gotAny = true;
 		} else if (img.src.includes("card_grain")) {
 		    resources[player][wheat] += 1;
@@ -304,7 +304,7 @@ function parseBuiltMessage(pElement) {
             resources[player][sheep] -= 1;
             resources[player][wheat] -= 1;
         } else if (img.src.includes("city")) {
-            resources[player][stone] -= 3;
+            resources[player][ore] -= 3;
             resources[player][wheat] -= 2;
         }
     }
@@ -328,7 +328,7 @@ function parseBoughtMessage(pElement) {
         if (img.src.includes("card_devcardback")) {
             resources[player][sheep] -= 1;
             resources[player][wheat] -= 1;
-            resources[player][stone] -= 1;
+            resources[player][ore] -= 1;
         }
     }
 }
@@ -358,7 +358,7 @@ function parseTradeBankMessage(pElement) {
         } else if (imgStr.includes("card_brick")) {
             resources[player][brick] -= 1;
         } else if (imgStr.includes("card_ore")) {
-            resources[player][stone] -= 1; 
+            resources[player][ore] -= 1; 
         } else if (imgStr.includes("card_grain")) {
             resources[player][wheat] -= 1;
         }
@@ -371,7 +371,7 @@ function parseTradeBankMessage(pElement) {
         } else if (imgStr.includes("card_brick")) {
             resources[player][brick] += 1;
         } else if (imgStr.includes("card_ore")) {
-            resources[player][stone] += 1; 
+            resources[player][ore] += 1; 
         } else if (imgStr.includes("card_grain")) {
             resources[player][wheat] += 1;
         }
@@ -410,7 +410,7 @@ function parseStoleAllOfMessage(pElement) {
         } else if (img.src.includes("card_brick")) {
             stealAllOfResource(player, brick);
         } else if (img.src.includes("card_ore")) {
-            stealAllOfResource(player, stone);
+            stealAllOfResource(player, ore);
         } else if (img.src.includes("card_grain")) {
             stealAllOfResource(player, wheat);
         }
@@ -439,7 +439,7 @@ function parseDiscardedMessage(pElement) {
         } else if (img.src.includes("card_brick")) {
             resources[player][brick] -= 1;
         } else if (img.src.includes("card_ore")) {
-            resources[player][stone] -= 1; 
+            resources[player][ore] -= 1; 
         } else if (img.src.includes("card_grain")) {
             resources[player][wheat] -= 1;
         }
@@ -478,7 +478,7 @@ function parseTradedMessage(pElement, prevElement) {
         } else if (imgStr.includes("card_brick")) {
             transferResource(tradingPlayer, agreeingPlayer, brick);
         } else if (imgStr.includes("card_ore")) {
-            transferResource(tradingPlayer, agreeingPlayer, stone);
+            transferResource(tradingPlayer, agreeingPlayer, ore);
         } else if (imgStr.includes("card_grain")) {
             transferResource(tradingPlayer, agreeingPlayer, wheat);
         }
@@ -491,7 +491,7 @@ function parseTradedMessage(pElement, prevElement) {
         } else if (imgStr.includes("card_brick")) {
             transferResource(agreeingPlayer, tradingPlayer, brick);
         } else if (imgStr.includes("card_ore")) {
-            transferResource(agreeingPlayer, tradingPlayer, stone);
+            transferResource(agreeingPlayer, tradingPlayer, ore);
         } else if (imgStr.includes("card_grain")) {
             transferResource(agreeingPlayer, tradingPlayer, wheat);
         }
@@ -523,7 +523,7 @@ function parseStoleFromYouMessage(pElement, prevElement) {
         } else if (img.src.includes("card_brick")) {
             transferResource(targetPlayer, stealingPlayer, brick);
         } else if (img.src.includes("card_ore")) {
-            transferResource(targetPlayer, stealingPlayer, stone);
+            transferResource(targetPlayer, stealingPlayer, ore);
         } else if (img.src.includes("card_grain")) {
             transferResource(targetPlayer, stealingPlayer, wheat);
         }
@@ -728,7 +728,7 @@ function recognizeUsers() {
             player_colors[username] = msg.style.color;
             resources[username] = {
                 [wood ]: 0,
-                [stone]: 0,
+                [ore]: 0,
                 [wheat]: 0,
                 [brick]: 0,
                 [sheep]: 0,
