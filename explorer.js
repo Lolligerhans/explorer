@@ -630,7 +630,7 @@ function parseLatestMessages() {
     var newOffset = allMessages.length;
     var newMessages = allMessages.slice(MSG_OFFSET);
     console.log("New offset:", newOffset);
-    if (MSG_OFFSET == newOffset)
+    if (MSG_OFFSET === newOffset)
     	console.log("Parsin new message(s)...");
     else
     	console.log("[INFO] No new message");
