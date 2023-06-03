@@ -253,7 +253,7 @@ function parseInitialGotMessage(pElement) {
 function parseGotMessage(pElement) {
     var textContent = pElement.textContent;
     if (textContent.includes(receivedResourcesSnippet)) {
-        console.log("Found gotMessage. Parsing...");
+        console.log("Found gotMessage. Parsing:", textContent);
 	    var player = textContent.replace(receivedResourcesSnippet, "").split(" ")[0];
 	    if (!resources[player]) {
             console.log("Failed to parse player...", player, resources);
@@ -695,6 +695,7 @@ function parseLatestMessages() {
     }
 
     ALL_PARSERS.forEach(parser => newMessages.forEach((msg, idx) => {
+        console.log("Parsing message:", msg.textContent);
         var prevMessage = idx > 0 ? newMessages[idx - 1] : allMessages[MSG_OFFSET - 1];
         parser(msg, prevMessage);
     }));
