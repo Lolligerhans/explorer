@@ -206,8 +206,44 @@ function render() {
 }
 
 /**
+* Process initial ressource message after placing first settlement.
+*/
+function parseInitialGotMessage(pElement) {
+    var textContent = pElement.textContent;
+    if (!text.Content.includes(receivedInitialResourcesSnipped))
+    {
+    	    var player = textContent.replace(receivedInitialResourcesSnipped, "").split(" ")[0];
+	    if (!resources[player]) {
+		console.log("Failed to parse player (initial ressources)...", player, resources);
+		return;
+	    }
+	    var images = collectionToArray(pElement.getElementsByTagName('img'));
+	    var gotAny = false;
+	    for (var img of images) {
+		if (img.src.includes("card_wool")) {
+		    resources[player][sheep] += 1;
+		    gotAny = true;
+		} else if (img.src.includes("card_lumber")) {
+		    resources[player][wood] += 1;
+		    gotAny = true;
+		} else if (img.src.includes("card_brick")) {
+		    resources[player][brick] += 1;
+		    gotAny = true;
+		} else if (img.src.includes("card_ore")) {
+		    resources[player][stone] += 1; 
+		    gotAny = true;
+		} else if (img.src.includes("card_grain")) {
+		    resources[player][wheat] += 1;
+		    gotAny = true;
+		}
+	    }
+	    if (gotAny === false)
+	    	console.log("[WARNING] Parsed initial ressource message with no ressources.");
+    }
+}
+
+/**
 * Process a "got resource" message: [user icon] [user] got: ...[resource images]
-* Or equivalent initial ressource message		
 */
 function parseGotMessage(pElement) {
     var textContent = pElement.textContent;
@@ -231,36 +267,6 @@ function parseGotMessage(pElement) {
 		    gotAny = true;
 		} else if (img.src.includes("card_ore")) {
 		    resources[player][stone] += 1;
-		    gotAny = true;
-		} else if (img.src.includes("card_grain")) {
-		    resources[player][wheat] += 1;
-		    gotAny = true;
-		}
-	    }
-	    if (gotAny === false)
-	    	console.log("[WARNING] Parsed initial ressource message with no ressources.");
-    }
-    else if (text.Content.includes(receivedInitialResourcesSnipped))
-    {
-    	    var player = textContent.replace(receivedInitialResourcesSnipped, "").split(" ")[0];
-	    if (!resources[player]) {
-		console.log("Failed to parse player (initial ressources)...", player, resources);
-		return;
-	    }
-	    var images = collectionToArray(pElement.getElementsByTagName('img'));
-	    var gotAny = false;
-	    for (var img of images) {
-		if (img.src.includes("card_wool")) {
-		    resources[player][sheep] += 1;
-		    gotAny = true;
-		} else if (img.src.includes("card_lumber")) {
-		    resources[player][wood] += 1;
-		    gotAny = true;
-		} else if (img.src.includes("card_brick")) {
-		    resources[player][brick] += 1;
-		    gotAny = true;
-		} else if (img.src.includes("card_ore")) {
-		    resources[player][stone] += 1; 
 		    gotAny = true;
 		} else if (img.src.includes("card_grain")) {
 		    resources[player][wheat] += 1;
@@ -650,6 +656,7 @@ function reviewThefts() {
 }
 
 var ALL_PARSERS = [
+    //parseInitialGotMessage,   // Initial got parser is not included. We only use it one at the start, not regularly.
     parseGotMessage,
     parseBuiltMessage,
     parseBoughtMessage,
@@ -696,7 +703,7 @@ function tallyInitialResources() {
 	console.log("START tallyInitialResources()");
     var allMessages = getAllMessages();
     MSG_OFFSET = allMessages.length;
-    allMessages.forEach(parseGotMessage);
+    allMessages.forEach(parseInitialGotMessage);
     deleteDiscordSigns();
     render();
     deleteDiscordSigns(); // idk why but it takes 2 runs to delete both signs
