@@ -25,7 +25,8 @@ var stone = "stone";
 var wheat = "wheat";
 var brick = "brick";
 var sheep = "sheep";
-var resourceTypes = [wood, stone, wheat, brick, sheep];
+var resourceTypes = [wood, brick, sheep, wheat, ore];
+//var resourceTypes = [wood, stone, wheat, brick, sheep];
 
 // Players
 var players = [];
