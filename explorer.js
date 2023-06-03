@@ -208,6 +208,30 @@ function render() {
 }
 
 /**
+ * Find where the first non-initial message is.
+ *
+ * Iterate all messages, keeping track of last placement message. Return
+ * 1 + index of last such message.
+ */
+function computeInitialPhaseOffset(messages)
+{
+    var lastPlacementMessage = 0;
+    messages.forEach
+    (
+        (msg, i) =>
+        {
+            var text = msg.textContent;
+            if (text.includes(placeInitialSettlementSnippet))
+            {
+                lastPlacementMessage = Math.max(lastPlacementMessage, i);
+            }
+        }
+    );
+    console.log("Found last placement message at index", lastPlacementMessage);
+    return lastPlacementMessage + 1;
+}
+
+/**
 * Process initial ressource message after placing first settlement.
 */
 function parseInitialGotMessage(pElement) {
@@ -718,6 +742,11 @@ function tallyInitialResources() {
     var allMessages = getAllMessages();
     MSG_OFFSET = allMessages.length;
     allMessages.forEach(parseInitialGotMessage);
+
+    var correctedOffset = computeInitialPhaseOffset(allMessages);
+    console.log("Correcting MSG_OFFSET from", MSG_OFFSET, "to", correctedOffset);
+    MSG_OFFSET = correctedOffset;
+
     deleteDiscordSigns();
     render();
     deleteDiscordSigns(); // idk why but it takes 2 runs to delete both signs
@@ -730,14 +759,14 @@ function tallyInitialResources() {
 function recognizeUsers() {
     var placementMessages = getAllMessages()
     .filter(msg => msg.textContent.includes(placeInitialSettlementSnippet));
-    console.log("total placement messages found:", placementMessages.length);
+//    console.log("total placement messages found (we search for users here):", placementMessages.length);
     for (var msg of placementMessages) {
         msg_text = msg.textContent;
         username = msg_text.replace(placeInitialSettlementSnippet, "").split(" ")[0];
 //        console.log(username);
         if (!resources[username]) {
             players.push(username);
-            console.log("Adding user", username);
+//            console.log("Adding user", username);
             player_colors[username] = msg.style.color;
             resources[username] = {
                 [wood ]: 0,
@@ -751,7 +780,10 @@ function recognizeUsers() {
         {
         	console.log("Skip re-recognizing existing user", username);
         }
-        
+    }
+    for (var p in players)
+    {
+        console.log("Found player:", p);
     }
 }
 
