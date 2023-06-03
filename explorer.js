@@ -661,6 +661,80 @@ function parseStealIncludingYou(pElement, prevElement)
 }
 
 /**
+ * Steals
+ */
+function parseStealFromOtherPlayers(pElement, prevElement)
+{
+    var textContent = pElement.textContent;
+
+    // Detect desired message type
+    var conatainsYou = textContent.includes("You") || textContent.includes("you");
+    var containsStealSnippet = textContent.includes("stole:");
+    if (containsYou || !containsStealSnippet)   // (!)
+    {
+        return;
+    }
+
+    // Obtain player names
+    var involvedPlayers = textContent
+        .replace(":", "")   // One version has an extra colon
+        .replace(" stole:  from ", " ") // After this only the names are left
+        .split(" ");
+
+    // Replace player name
+    for (p of involvedPlayers)
+    {
+        if (p === "You" || p === "you")
+            p = configPlayerName;
+    }
+
+    // Sanity check
+    var stealingPlayer = involvedPlayers[0];
+    var targetPlayer = involvedPlayers[1];
+    if (!resources[stealingPlayer] || !resources[targetPlayer])
+    {
+        console.log("[ERROR] Failed to steal. Invalid parse of players:",
+                    stealingPlayer, targetPlayer, resources);
+        alert(5);
+        return;
+    }
+
+    // Since we do not know the stolen resource type, we handle the available
+    // options.
+    theft = { who: { stealingPlayer, targetPlayer, },
+             what: {} };
+    for (var resourceType of resourceTypes)
+    {
+        if (resources[targetPlayer][resourceType] > 0)
+        {
+            theft.what[resourceType] = 1;
+        }
+    }
+    var resourceTypesPotentiallyStolen = Object.keys(theft.what);
+    if (resourceTypesPotentiallyStolen.length === 0)
+    {
+        // nothing could have been stolen
+        console.log("[ERROR] Parsing hidden steal message but robbed player has nothing");
+        alert(6);
+        return;
+    }
+    if (resourceTypesPotentiallyStolen.length === 1) {
+        // only 1 resource could have been stolen, so it's not an unknown
+        transferResource(targetPlayer, stealingPlayer, resourceTypesPotentiallyStolen[0]);
+        console.log("[INFO] Solved unknown steal: ", stealingPlayer, "stole",
+                    ressourceTypesPotentiallyStolen[0], "from", targetPlayer);
+    } else {
+        // we can't be sure, so record the unknown
+        thefts.push(theft);
+        console.log("[INFO] Unknown steal:", stealingPlayer, "stole from", targetPlayer);
+    }
+
+    console.log("[INFO] Player", stealingPlayer,
+                "stole", "[unknown]",
+                "from", targetPlayer);
+}
+
+/**
  * Message T-1: [stealingPlayer] stole [resource] from: [targetPlayer]
  * Message T is NOT: [stealingPlayer] stole: [resource]
  */
@@ -683,6 +757,7 @@ function parseStoleUnknownMessage(pElement, prevElement) {
         console.log("Failed to parse player...", stealingPlayer, targetPlayer, resources);
         return;
     }
+
     // for the player being stolen from, (-1) on all resources that are non-zero
     // for the player receiving, (+1) for all resources that are non-zero FOR THE OTHER PLAYER
     // record the unknown and wait for it to surface
