@@ -671,7 +671,7 @@ function parseStealFromOtherPlayers(pElement, prevElement)
     var textContent = pElement.textContent;
 
     // Detect desired message type
-    var conatainsYou = textContent.includes("You") || textContent.includes("you");
+    var conainsYou = textContent.includes("You") || textContent.includes("you");
     var containsStealSnippet = textContent.includes("stole:");
     if (containsYou || !containsStealSnippet)   // (!)
     {
