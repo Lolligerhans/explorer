@@ -6,7 +6,7 @@ var initialPlacementMade = false;
 //var initialPlacementDoneMessage = "Giving out starting resources";
 var initialPlacementDoneSnippet = "rolled";
 var placeInitialSettlementSnippet = "placed a"; // Normal building uses the word "built", not "placed"
-var reviecedInitialResourcesSnippet: "received starting resources:";
+var reviecedInitialResourcesSnippet = "received starting resources:";
 var receivedResourcesSnippet = "got:";
 var builtSnippet = "built a";
 var boughtSnippet = " bought ";
@@ -210,7 +210,7 @@ function render() {
 */
 function parseInitialGotMessage(pElement) {
     var textContent = pElement.textContent;
-    if (!text.Content.includes(receivedInitialResourcesSnipped))
+    if (textContent.includes(receivedInitialResourcesSnipped))
     {
     	    var player = textContent.replace(receivedInitialResourcesSnipped, "").split(" ")[0];
 	    if (!resources[player]) {
