@@ -52,7 +52,7 @@ function addStylesheet()
     link.id   = cssId;
     link.rel  = 'stylesheet';
     link.type = 'text/css';
-    link.href = 'github/explorer/styles.css'
+    link.href = 'file:///home/bill/github/explorer/styles.css'
 //    link.href = 'http://website.example/css/stylesheet.css';
     link.media = 'all';
     head.appendChild(link);
@@ -629,15 +629,19 @@ function parseLatestMessages() {
     var allMessages = getAllMessages();
     var newOffset = allMessages.length;
     var newMessages = allMessages.slice(MSG_OFFSET);
+    console.log("New offset:", newOffset);
+    if (MSG_OFFSET == newOffset)
+    	console.log("Parsin new message(s)...");
+    else
+    	console.log("[INFO] No new message");
+
     ALL_PARSERS.forEach(parser => newMessages.forEach((msg, idx) => {
         var prevMessage = idx > 0 ? newMessages[idx - 1] : allMessages[MSG_OFFSET - 1];
         parser(msg, prevMessage);
     }));
+    
+
     MSG_OFFSET = newOffset;
-    if (MSG_OFFSET == newOffset)
-    	console.log("Parsed new message(s)");
-    else
-    	console.log("[INFO] No new message");
     reviewThefts();
     render();
 }
