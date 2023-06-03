@@ -51,6 +51,46 @@ var thefts = [];
 // Thefts - once the unknown resources are accounted for
 var solved_thefts = [];
 
+//============================================================
+// Helpers
+//============================================================
+
+var ressourceCardNames =
+{
+    wood: "card_lumber",
+    brick: "card_brick",
+    sheep: "card_wool",
+    wheat: "card_grain",
+    ore: "card_ore"
+};
+
+// Returns resource type of any resource card found in the element. Use when
+// there is only one resource card.
+function findSingularResourceImageInElement(element)
+{
+    var images = collectionToArray(element.getElementsByTagName("img"));
+    var ressourceType;
+
+    // Usually 1 image, but check all to be sure
+    for (var img of images)
+    {
+        // Check which resource it is
+        for (resourceType of resourceTypes)
+        {
+            if (img.src.includes(resourceCardNames[resourceType]))
+            {
+                console.log("Found singular resource type", resourceType);
+                return resourceType;
+            }
+        }
+    }
+    
+    // Indicate error
+    console.log("[ERROR] Expected resource image in element");
+    alert(4);
+}
+
+//============================================================
 
 function addStylesheet()
 {
