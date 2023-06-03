@@ -56,7 +56,7 @@ function addStylesheet()
 //    link.href = 'http://website.example/css/stylesheet.css';
     link.media = 'all';
     head.appendChild(link);
-    conosole.log("Added explorer stylesheet");
+    console.log("Added explorer stylesheet");
   }
   else
   {
