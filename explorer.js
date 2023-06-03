@@ -748,15 +748,17 @@ function waitForInitialPlacement() {
 function findTranscription() {
     var interval = setInterval(() => {
         if (logElement) {
-            console.log("Logs loaded...");
+            console.log("Found log element");
             clearInterval(interval);
+            console.log("Transcript interval cleared");
             waitForInitialPlacement();
         } else {
+        	console.log("Searching log element");
             logElement = document.getElementById("game-log-text");
             console.log("game-log-text found");
         }
     }, 2000);
 }
 
-addStylesheet();
+//addStylesheet();
 findTranscription();
