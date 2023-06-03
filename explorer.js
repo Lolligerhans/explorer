@@ -671,7 +671,7 @@ function parseStealFromOtherPlayers(pElement, prevElement)
     var textContent = pElement.textContent;
 
     // Detect desired message type
-    var conainsYou = textContent.includes("You") || textContent.includes("you");
+    var containsYou = textContent.includes("You") || textContent.includes("you");
     var containsStealSnippet = textContent.includes("stole:");
     if (containsYou || !containsStealSnippet)   // (!)
     {
@@ -963,7 +963,7 @@ function recognizeUsers() {
                 var front = "settlement_";
                 var back = ".svg";
                 var colorName = str.substring(
-                    str.indexOf(front) + front.length + 1,  // skip underscore too
+                    str.indexOf(front) + front.length,  // ?? For some reason no +1 needed
                     str.indexOf(back) // Images are .svg currently
                 );
                 // We assume that the colorName string is a valid colour word
