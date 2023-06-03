@@ -4,6 +4,7 @@ console.log("STARTED...");
 var logElement;
 var initialPlacementMade = false;
 var initialPlacementDoneMessage = "Giving out starting resources";
+var initialPlacementDoneSnippet = "rolled";
 var placeInitialSettlementSnippet = "turn to place";
 var receivedResourcesSnippet = "got:";
 var builtSnippet = "built a";
@@ -240,6 +241,7 @@ function parseBuiltMessage(pElement) {
     if (!textContent.includes(builtSnippet)) {
         return;
     }
+    console.log("Parsing build message");
     var images = collectionToArray(pElement.getElementsByTagName('img'));
     var player = textContent.split(" ")[0];
     if (!resources[player]) {
@@ -632,10 +634,10 @@ function parseLatestMessages() {
         parser(msg, prevMessage);
     }));
     MSG_OFFSET = newOffset;
-    if (MSG_OFFSET == newOFfset)
-    	console.log("Parsed new messages");
+    if (MSG_OFFSET == newOffset)
+    	console.log("Parsed new message(s)");
     else
-    	console.log("[INFO] No new messages");
+    	console.log("[INFO] No new message");
     reviewThefts();
     render();
 }
@@ -670,9 +672,10 @@ function recognizeUsers() {
         console.log(username);
         if (!resources[username]) {
             players.push(username);
+            console.log("Adding user", username);
             player_colors[username] = msg.style.color;
             resources[username] = {
-                [wood]: 0,
+                [wood ]: 0,
                 [stone]: 0,
                 [wheat]: 0,
                 [brick]: 0,
@@ -693,6 +696,7 @@ function clearResources() {
 
 function loadCounter() {
     setTimeout(() => {
+    	console.log("START loadCounter()");
         recognizeUsers();
         tallyInitialResources();
     }, 2000); // wait for inital resource distribution to be logged
@@ -713,14 +717,26 @@ function collectionToArray(collection) {
 * Wait for players to place initial settlements so we can determine who the players are.
 */
 function waitForInitialPlacement() {
+	console.log("Waiting for initial placements...");
     var interval = setInterval(() => {
         if (initialPlacementMade) {
             clearInterval(interval);
+            console.log("Placements made. waitForPlacement() interval cleared");
             loadCounter();
         } else {
             var messages = Array.prototype.slice.call(logElement.children).map(p => p.textContent);
-            if (messages.some(m => m === initialPlacementDoneMessage)) {
-                initialPlacementMade = true;
+            if (messages.some( m => m.includes(initialPlacementDoneSnippet)) )
+            {
+            	initialPlacementMade = true;
+            	console.log("Found initial placements done snippet");
+            }
+//            if (messages.some(m => m === initialPlacementDoneMessage)) {
+//                initialPlacementMade = true;
+//                console.log("Found initial placements done message");
+//            }
+            else
+            {
+            	console.log("[INFO] Initial placement done snippet not found");
             }
         }
     }, 2000);
