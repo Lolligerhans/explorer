@@ -956,7 +956,7 @@ function recognizeUsers() {
             var images = collectionToArray(msg.getElementsByTagName("img"));
             for (var image of images)
             {
-                var str = img.src;
+                var str = image.src;
                 // Settlement is placed first, so we assume we find it before
                 // the road. Example HTML:
                 //  <img src="/dist/images/road_blue.svg?v159" alt="road" class="lobby-chat-text-icon" width="20" height="20">
