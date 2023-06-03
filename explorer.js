@@ -210,9 +210,9 @@ function render() {
 */
 function parseInitialGotMessage(pElement) {
     var textContent = pElement.textContent;
-    if (textContent.includes(receivedInitialResourcesSnipped))
+    if (textContent.includes(receivedInitialResourcesSnippet))
     {
-    	    var player = textContent.replace(receivedInitialResourcesSnipped, "").split(" ")[0];
+    	    var player = textContent.replace(receivedInitialResourcesSnippet, "").split(" ")[0];
 	    if (!resources[player]) {
 		console.log("Failed to parse player (initial ressources)...", player, resources);
 		return;
