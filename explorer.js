@@ -543,7 +543,8 @@ function parseStoleFromYouMessage(pElement, prevElement) {
     var stealingPlayer = involvedPlayers[0];
     var targetPlayer = involvedPlayers[1];
     if (!resources[stealingPlayer] || !resources[targetPlayer]) {
-        console.log("Failed to parse player...", stealingPlayer, targetPlayer, resources);
+        console.log("[ERROR] Failed to parse player...", stealingPlayer, targetPlayer, resources);
+        alert(2);
         return;
     }
     var images = collectionToArray(pElement.getElementsByTagName('img'));
