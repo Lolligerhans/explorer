@@ -663,8 +663,8 @@ function reviewThefts() {
     thefts = thefts.filter(t => !t.solved);
 }
 
+// The parser, parseInitialGotMessage() is not included in this list. We call use it one at the start, not regularly.
 var ALL_PARSERS = [
-    //parseInitialGotMessage,   // Initial got parser is not included. We only use it one at the start, not regularly.
     parseGotMessage,
     parseBuiltMessage,
     parseBoughtMessage,
