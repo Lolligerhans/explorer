@@ -35,6 +35,7 @@
 .explorer-tbl-cell {
     border: none;
     box-sizing: unset;
+    color: "black";
     padding: 0 2px;
     text-align: center;
     line-height: 3em;
