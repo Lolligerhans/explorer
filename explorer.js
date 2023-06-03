@@ -38,7 +38,7 @@ var resources = {};
 // Message offset
 var MSG_OFFSET = 0;
 
-// Thefts - transactions from when the robber is placed and stolen resource is unknown 
+// Thefts - transactions from when the robber is placed and stolen resource is unknown
 var thefts = [];
 // Thefts - once the unknown resources are accounted for
 var solved_thefts = [];
@@ -68,7 +68,7 @@ function addStylesheet()
 
 // First, delete the discord signs
 function deleteDiscordSigns() {
-    var allPageImages = document.getElementsByTagName('img'); 
+    var allPageImages = document.getElementsByTagName('img');
     for(var i = 0; i < allPageImages.length; i++) {
         if (allPageImages[i].src.includes("discord")) {
             allPageImages[i].remove();
@@ -85,7 +85,7 @@ function deleteDiscordSigns() {
 }
 
 /**
- * Calculate the total lost quantity of a resource for a given player. 
+ * Calculate the total lost quantity of a resource for a given player.
  * i.e. if 1 card was potentially stolen, return 1.
  */
 function calculateTheftForPlayerAndResource(player, resourceType) {
@@ -163,7 +163,7 @@ function render() {
     tbl.setAttribute("cellspacing", 0);
     tbl.setAttribute("cellpadding", 0);
     tbl.id = "explorer-tbl";
-    
+
     // Header row - one column per resource, plus player column
     var header = tbl.createTHead();
     header.className = "explorer-tbl-header";
@@ -177,7 +177,7 @@ function render() {
         resourceHeaderCell.className = "explorer-tbl-cell";
         resourceHeaderCell.innerHTML = getResourceImg(resourceType);
     }
-    
+
     var tblBody = tbl.createTBody();
     // Row per player
     for (var i = 0; i < players.length; i++) {
@@ -193,17 +193,17 @@ function render() {
             var resourceType = resourceTypes[j];
             var cellCount = resources[player][resourceType];
             var theftCount = calculateTheftForPlayerAndResource(player, resourceType);
-            cell.innerHTML = theftCount === 0 
-                ? "" + resources[player][resourceType] 
+            cell.innerHTML = theftCount === 0
+                ? "" + resources[player][resourceType]
                 : `${cellCount} (${cellCount + theftCount})`;
         }
     }
 
     // put <table> in the <body>
     body.appendChild(tbl);
-    // tbl border attribute to 
+    // tbl border attribute to
     tbl.setAttribute("border", "2");
-    
+
     console.log("rendering done hopefully");
 }
 
@@ -232,7 +232,7 @@ function parseInitialGotMessage(pElement) {
                 resources[player][brick] += 1;
                 gotAny = true;
             } else if (img.src.includes("card_ore")) {
-                resources[player][ore] += 1; 
+                resources[player][ore] += 1;
                 gotAny = true;
             } else if (img.src.includes("card_grain")) {
                 resources[player][wheat] += 1;
@@ -366,7 +366,7 @@ function parseTradeBankMessage(pElement) {
         } else if (imgStr.includes("card_brick")) {
             resources[player][brick] -= 1;
         } else if (imgStr.includes("card_ore")) {
-            resources[player][ore] -= 1; 
+            resources[player][ore] -= 1;
         } else if (imgStr.includes("card_grain")) {
             resources[player][wheat] -= 1;
         }
@@ -379,7 +379,7 @@ function parseTradeBankMessage(pElement) {
         } else if (imgStr.includes("card_brick")) {
             resources[player][brick] += 1;
         } else if (imgStr.includes("card_ore")) {
-            resources[player][ore] += 1; 
+            resources[player][ore] += 1;
         } else if (imgStr.includes("card_grain")) {
             resources[player][wheat] += 1;
         }
@@ -447,7 +447,7 @@ function parseDiscardedMessage(pElement) {
         } else if (img.src.includes("card_brick")) {
             resources[player][brick] -= 1;
         } else if (img.src.includes("card_ore")) {
-            resources[player][ore] -= 1; 
+            resources[player][ore] -= 1;
         } else if (img.src.includes("card_grain")) {
             resources[player][wheat] -= 1;
         }
@@ -592,7 +592,7 @@ function parseStoleUnknownMessage(pElement, prevElement) {
 /**
  * See if thefts can be solved based on current resource count.
  * Rules:
- *  
+ *
  *  - if resource count < 0, then they spent a resource they stole (what if there are multiple thefts that could account for this?)
  *  - if resource count + theft count < 0, then we know that resource was stolen, and we can remove it from the list of potentials.
  *     - if there's only 1 resource left, we know what was stolen in another instance.
@@ -621,12 +621,12 @@ function reviewThefts() {
                     if (thefts[i].who.targetPlayer === player && !!thefts[i].what[resourceType]) {
                         delete thefts[i].what[resourceType];
                         console.log("Theft possibilities reduced!", thefts[i], resourceType);
-                        
+
                         var remainingResourcePossibilities = Object.keys(thefts[i].what);
                         if (remainingResourcePossibilities.length === 1) {
                             transferResource(
-                                thefts[i].who.targetPlayer, 
-                                thefts[i].who.stealingPlayer, 
+                                thefts[i].who.targetPlayer,
+                                thefts[i].who.stealingPlayer,
                                 remainingResourcePossibilities[0]
                             );
                             thefts[i].solved = true;
@@ -650,8 +650,8 @@ function reviewThefts() {
                 var remainingOptions = Object.keys(thefts[i].what);
                 if (remainingOptions === 1) {
                     transferResource(
-                        thefts[i].who.targetPlayer, 
-                        thefts[i].who.stealingPlayer, 
+                        thefts[i].who.targetPlayer,
+                        thefts[i].who.stealingPlayer,
                         remainingOptions[0]
                     );
                     thefts[i].solved = true;
@@ -699,7 +699,7 @@ function parseLatestMessages() {
         var prevMessage = idx > 0 ? newMessages[idx - 1] : allMessages[MSG_OFFSET - 1];
         parser(msg, prevMessage);
     }));
-    
+
 
     MSG_OFFSET = newOffset;
     reviewThefts();
