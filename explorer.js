@@ -582,6 +582,7 @@ function parseTradedMessage(pElement, prevElement) {
  * Message T-1: [stealingPlayer] stole [resource] from: [targetPlayer]
  * Message T: [stealingPlayer] stole: [resource]
  */
+// TODO retire this old function
 function parseStoleFromYouMessage(pElement, prevElement) {
     var textContent = pElement.textContent;
     if (!textContent.includes(stoleFromYouSnippet)) {
@@ -611,10 +612,59 @@ function parseStoleFromYouMessage(pElement, prevElement) {
     }
 }
 
+// Parse steal including "you" or "You"
+//
+// Example text content we want to parse:
+//  You stole:  from: Isabel
+//  Isabel stole:  from you
+function parseStealIncludingYou(pElement, prevElement)
+{
+    var textContent = pElement.textContent;
+
+    // Detect desired message type
+    var conatainsYou = textContent.includes("You") || textContent.includes("you");
+    var containsStealSnippet = textContent.includes("stole:");
+    if (!containsYou || !containsStealSnippet)  // (!)
+    {
+        return;
+    }
+
+    // Obtain player names
+    var involvedPlayers = textContent
+        .replace(":", "")   // One version has an extra colon
+        .replace(" stole:  from ", " ") // After this only the names are left
+        .split(" ");
+
+    // Replace player name
+    for (p of involvedPlayers)
+    {
+        if (p === "You" || p === "you")
+            p = configPlayerName;
+    }
+
+    // Sanity check
+    var stealingPlayer = involvedPlayers[0];
+    var targetPlayer = involvedPlayers[1];
+    if (!resources[stealingPlayer] || !resources[targetPlayer])
+    {
+        console.log("[ERROR] Failed to steal. Invalid parse of players:",
+                    stealingPlayer, targetPlayer, resources);
+        alert(3);
+        return;
+    }
+
+    var stolenResourceType = findSingularResourceImageInElement(pElement);
+    transferResource(targetPlayer, stealingPlayer, stolenResourceType);
+    console.log("[INFO] Player", stealingPlayer,
+                "stole", stolenResource,
+                "from", targetPlayer);
+}
+
 /**
  * Message T-1: [stealingPlayer] stole [resource] from: [targetPlayer]
  * Message T is NOT: [stealingPlayer] stole: [resource]
  */
+// TODO Reture this old function
 function parseStoleUnknownMessage(pElement, prevElement) {
     if (!prevElement) {
         return;
