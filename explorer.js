@@ -257,7 +257,7 @@ function shouldRenderTable(...deps) {
 */
 function render() {
     if (!shouldRenderTable(resources, thefts)) {
-    	console.log("not rendering");
+//    	console.log("not rendering");
         return;
     }
 
@@ -315,7 +315,7 @@ function render() {
     // tbl border attribute to
     tbl.setAttribute("border", "2");
 
-    console.log("rendering done hopefully");
+//    console.log("rendering done hopefully");
 }
 
 /**
