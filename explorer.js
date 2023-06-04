@@ -1,10 +1,12 @@
 //============================================================
 // 1.   o   Steal known
-// 2.   x   Steal unknown 
+// 2.   ?   Steal unknown 
 // 3.   o   trade bank
-// 4.   x   trade player
+// 4.   o   trade player
 // 5.   o   collect from settle/city
 // 6.   x   Track unknown cards
+// 7.   o   Monopoly
+// 8.   x   Year of plenty
 //============================================================
 
 //============================================================
