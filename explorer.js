@@ -516,8 +516,8 @@ function stealAllOfResource(receivingPlayer, resource) {
 //
 // TODO: Use info to determine unknown resources.
 //
-// Example text content:
-//  John stole 6:
+// Example HTML content:
+//  John#1234 stole 2: <img...>
 //
 // Monopoly lines contain "stole" but do NOT contain a "from:" since they steal
 // from everyone.
@@ -616,7 +616,7 @@ function transferResource(srcPlayer, destPlayer, resource, quantity = 1) {
  * Parse trade messages.
  *
  * Example HTML content:
- *  Julius traded: <img...><img...> for: <img...> with: Jennie#8540
+ *  Julius traded: <img...><img...> for: <img...> with: John#1234
  * Note: Contains 3 colons, resulting in 4 sections after split(":"). Middle
  *       two sections contain the resource imgages.
  */
