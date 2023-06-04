@@ -14,7 +14,7 @@
 //============================================================
 
 var configPlayerName = "Jennie#8540";
-var configDoAlert = false;
+var configDoAlert = true;
 
 //============================================================
 
@@ -39,6 +39,7 @@ var tradeWantsToGiveSnippet = "wants to give:";
 var tradeGiveForSnippet = "for:";
 var stoleFromYouSnippet = "stole:";
 var stoleFromSnippet = " stole  from: "; // extra space from icon
+var yearOfPlentySnippet = " took from bank: ";
 
 var wood = "wood";
 var ore = "ore";
@@ -375,8 +376,47 @@ function parseInitialGotMessage(pElement) {
         {
 	    	console.log("[WARNING] Parsed initial resource message with no resources.");
             alertIf(1);
+            return;
         }
     }
+}
+
+function parseYearOfPLenty(element)
+{
+    let textContent = element.textContent;
+    if (!textContent.includes(yearOfPlentySnippet))
+    {
+        return;
+    }
+
+    // Determine player
+    let beneficiary = textContent.substring(0, textContent.indexOf(yearOfPlentySnippet));
+    if (!resources[beneficiary])
+    {
+        console.log("[ERROR] Failed to identify YOP beneficiary.",
+                    "| Got:", beneficiary, "| from textContent:", textContent);
+        alertIf(11);
+        return;
+    }
+
+    // Determine resources
+    let obtainedResources = findAllResourceCardsInHtml(element.innerHTML);
+    let gotAny = false;
+    for (const [res, count] of Object.entries(obtainedResources))
+    {
+        resources[beneficiary][res] += count;
+        if (count != 0) gotAny = true;
+    }
+    if (gotAny !== false)
+    {
+        console.log("[ERROR] Expected benefit from YOP for player",
+                    "| Got resources:", obtainedResources,
+                    "| for player:", beneficiary);
+        alertIf(12);
+        return;
+    }
+    console.log("[INFO] Player", beneficiary,
+                "player YOP to obtain", obtainedResources);
 }
 
 /**
@@ -1047,6 +1087,7 @@ var ALL_PARSERS = [
     parseBuiltMessage,
     parseBoughtMessage,
     parseTradeBankMessage,
+    parseYearOfPLenty,
     parseMonopoly,
     // TODO Retire this old "parseStoleAllOfMessage" function
 //    parseStoleAllOfMessage,
