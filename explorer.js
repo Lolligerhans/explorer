@@ -662,7 +662,7 @@ function parseStealIncludingYou(pElement, prevElement)
     var stolenResourceType = findSingularResourceImageInElement(pElement);
     transferResource(targetPlayer, stealingPlayer, stolenResourceType);
     console.log("[INFO] Player", stealingPlayer,
-                "stole", stolenResource,
+                "stole", stolenResourceType,
                 "from", targetPlayer);
 }
 
