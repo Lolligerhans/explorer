@@ -923,7 +923,7 @@ function parseLatestMessages() {
 }
 
 function startWatchingMessages() {
-    setInterval(parseLatestMessages, 2000);
+    setInterval(parseLatestMessages, 5000);
 }
 
 /**
@@ -1017,7 +1017,7 @@ function loadCounter() {
     	console.log("START loadCounter()");
         recognizeUsers();
         tallyInitialResources();
-    }, 2000); // wait for inital resource distribution to be logged
+    }, 5000); // wait for inital resource distribution to be logged
 }
 
 function getAllMessages() {
@@ -1057,7 +1057,7 @@ function waitForInitialPlacement() {
             	console.log("Initial placement done snippet not found");
             }
         }
-    }, 2000);
+    }, 5000);
 }
 
 /**
@@ -1075,7 +1075,7 @@ function findTranscription() {
             logElement = document.getElementById("game-log-text");
             console.log("game-log-text found");
         }
-    }, 2000);
+    }, 5000);
 }
 
 //addStylesheet();
