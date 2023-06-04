@@ -535,7 +535,7 @@ function parseMonopoly(element)
     var thief = textContent.substring(0, textContent.match(" "));
     
     // Sanity check
-    if (!resources[player])
+    if (!resources[thief])
     {
         console.log("[ERROR] Failed to identify thief for monopoly.",
                     "| Got:", thief, "| from textContent:", textContent);
