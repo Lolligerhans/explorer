@@ -55,7 +55,7 @@ var solved_thefts = [];
 // Helpers
 //============================================================
 
-var ressourceCardNames =
+var resourceCardNames =
 {
     wood: "card_lumber",
     brick: "card_brick",
@@ -69,7 +69,7 @@ var ressourceCardNames =
 function findSingularResourceImageInElement(element)
 {
     var images = collectionToArray(element.getElementsByTagName("img"));
-    var ressourceType;
+    var resourceType;
 
     // Usually 1 image, but check all to be sure
     for (var img of images)
@@ -280,7 +280,7 @@ function computeInitialPhaseOffset(messages)
 }
 
 /**
-* Process initial ressource message after placing first settlement.
+* Process initial resource message after placing first settlement.
 */
 function parseInitialGotMessage(pElement) {
     var textContent = pElement.textContent;
@@ -288,7 +288,7 @@ function parseInitialGotMessage(pElement) {
     {
     	    var player = textContent.replace(receivedInitialResourcesSnippet, "").split(" ")[0];
 	    if (!resources[player]) {
-		console.log("Failed to parse player (initial ressources)...", player, resources);
+		console.log("Failed to parse player (initial resources)...", player, resources);
 		return;
 	    }
 	    var images = collectionToArray(pElement.getElementsByTagName('img'));
@@ -313,7 +313,7 @@ function parseInitialGotMessage(pElement) {
 	    }
 	    if (gotAny === false)
         {
-	    	console.log("[WARNING] Parsed initial ressource message with no ressources.");
+	    	console.log("[WARNING] Parsed initial resource message with no resources.");
             alert(1);
         }
     }
@@ -353,7 +353,7 @@ function parseGotMessage(pElement) {
 	    }
 	    if (gotAny === false)
         {
-	    	console.log("[WARNING] Parsed initial ressource message with no ressources.");
+	    	console.log("[WARNING] Parsed initial resource message with no resources.");
             alert(1);
         }
     }
@@ -631,20 +631,21 @@ function parseStealIncludingYou(pElement, prevElement)
 
     // Obtain player names
     var involvedPlayers = textContent
-        .replace(/:/, "")   // One version has an extra colon
+        .replace(/\:/g, "")   // One version has an extra colon
         .replace(" stole  from ", " ") // After this only the names are left
         .split(" ");
-    console.log(involvedPlayers);
+//    console.log(involvedPlayers);
 
     // Replace player name
-    for (p of involvedPlayers)
+    if (involvedPlayers[0] === "You" || involvedPlayers[0] === "you")
     {
-        if (p === "You" || p === "you")
-        {
-            p = configPlayerName;
-            console.log(p, "-- that's you!");
-        }
+        involvedPlayers[0] = configPlayerName;
     }
+    if (involvedPlayers[1] === "You" || involvedPlayers[1] === "you")
+    {
+        involvedPlayers[1] = configPlayerName;
+    }
+//    console.log(involvedPlayers);
 
     // Sanity check
     var stealingPlayer = involvedPlayers[0];
@@ -730,7 +731,7 @@ function parseStealFromOtherPlayers(pElement, prevElement)
         // only 1 resource could have been stolen, so it's not an unknown
         transferResource(targetPlayer, stealingPlayer, resourceTypesPotentiallyStolen[0]);
         console.log("[INFO] Solved unknown steal: ", stealingPlayer, "stole",
-                    ressourceTypesPotentiallyStolen[0], "from", targetPlayer);
+                    resourceTypesPotentiallyStolen[0], "from", targetPlayer);
     } else {
         // we can't be sure, so record the unknown
         thefts.push(theft);
