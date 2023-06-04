@@ -65,7 +65,7 @@ var solved_thefts = [];
 // Helpers
 //============================================================
 
-function alertIf(var message)
+function alertIf(message)
 {
     if (configDoAlert)
     {
@@ -898,12 +898,12 @@ function parseStealFromOtherPlayers(pElement, prevElement)
     if (resourceTypesPotentiallyStolen.length === 1) {
         // only 1 resource could have been stolen, so it's not an unknown
         transferResource(targetPlayer, stealingPlayer, resourceTypesPotentiallyStolen[0]);
-        console.log("[INFO] Solved unknown steal: ", stealingPlayer, "stole",
+        console.log("Solved unknown steal: ", stealingPlayer, "stole",
                     resourceTypesPotentiallyStolen[0], "from", targetPlayer);
     } else {
         // we can't be sure, so record the unknown
         thefts.push(theft);
-        console.log("[INFO] Unknown steal:", stealingPlayer, "stole from", targetPlayer);
+        console.log("Unknown steal:", stealingPlayer, "stole from", targetPlayer);
     }
 
     console.log("[INFO] Player", stealingPlayer,
