@@ -427,10 +427,11 @@ function parseYearOfPLenty(element)
 function parseGotMessage(pElement) {
     var textContent = pElement.textContent;
     if (textContent.includes(receivedResourcesSnippet)) {
-        console.log("Found gotMessage. Parsing:", textContent);
+//        console.log("Found gotMessage. Parsing:", textContent);
 	    var player = textContent.replace(receivedResourcesSnippet, "").split(" ")[0];
 	    if (!resources[player]) {
-            console.log("Failed to parse player...", player, resources);
+            console.log("[ERROR] Failed to parse got-message player", player, resources);
+            alertIf(14);
             return;
 	    }
 	    var images = collectionToArray(pElement.getElementsByTagName('img'));
@@ -469,11 +470,12 @@ function parseBuiltMessage(pElement) {
     if (!textContent.includes(builtSnippet)) {
         return;
     }
-    console.log("Parsing build message");
+//    console.log("Parsing build message");
     var images = collectionToArray(pElement.getElementsByTagName('img'));
     var player = textContent.split(" ")[0];
     if (!resources[player]) {
-        console.log("Failed to parse player...", player, resources);
+        console.log("[ERROR] Failed to parse building player", player, resources);
+        alertIf(15);
         return;
     }
     for (var img of images) {
