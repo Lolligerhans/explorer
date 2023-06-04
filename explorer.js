@@ -644,7 +644,8 @@ function parseDiscardedMessage(pElement) {
     }
     var player = textContent.replace(receivedResourcesSnippet, "").split(" ")[0];
     if (!resources[player]) {
-        console.log("Failed to parse player...", player, resources);
+        console.log("[ERROR] Failed to parse discarding player |", player, resources);
+        alertIf(13);
         return;
     }
     var images = collectionToArray(pElement.getElementsByTagName('img'));
