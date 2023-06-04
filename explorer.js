@@ -723,7 +723,7 @@ function parseStealIncludingYou(pElement, prevElement)
 
     // Detect desired message type
     var containsYou = textContent.includes("You") || textContent.includes("you");
-    var containsStealSnippet = textContent.includes("stole:");
+    var containsStealSnippet = textContent.includes(" stole:  from");
     if (!containsYou || !containsStealSnippet)  // (!)
     {
         return;
