@@ -20,6 +20,8 @@ var configDoAlert = true;
 
 console.log("STARTED...");
 
+var mainLoopInterval;
+
 var logElement;
 var initialPlacementMade = false;
 //var initialPlacementDoneMessage = "Giving out starting resources";
@@ -1125,6 +1127,11 @@ function parseLatestMessages() {
 
     ALL_PARSERS.forEach(parser => newMessages.forEach((msg, idx) => {
 //        console.log("Parsing message:", msg.textContent);
+        if (parseWin(msg))
+        {
+            clearInterval(mainLoopInterval);
+            console.log("[INFO] Game won");
+        }
         var prevMessage = idx > 0 ? newMessages[idx - 1] : allMessages[MSG_OFFSET - 1];
         parser(msg, prevMessage);
     }));
@@ -1135,7 +1142,7 @@ function parseLatestMessages() {
 }
 
 function startWatchingMessages() {
-    setInterval(parseLatestMessages, 5000);
+    mainLoopInterval = setInterval(parseLatestMessages, 5000);
 }
 
 /**
