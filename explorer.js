@@ -512,9 +512,45 @@ function stealAllOfResource(receivingPlayer, resource) {
     }
 }
 
+// Parse monopoly steals
+//
+// TODO: Use info to determine unknown resources.
+//
+// Example text content:
+//  John stole 6:
+//
+// Monopoly lines contain "stole" but do NOT contain a "from:" since they steal
+// from everyone.
+// Note: I dont know what happens with a 0-cards mono.
+function parseMonopoly(element)
+{
+    // Identify if a monopoly message is found
+    var textContent = element.textContent;
+    if (!textContent.includes("stole") || textContent.includes("from"))
+    {
+        return;
+    }
+
+    // Identify thief
+    var thief = textContent.substring(0, textContent.match(" "));
+    
+    // Sanity check
+    if (!resources[player])
+    {
+        console.log("[ERROR] Failed to identify thief for monopoly.",
+                    "| Got:", thief, "| from textContent:", textContent);
+        alert(10);
+        return;
+    }
+
+    let stolenResource = findSingularResourceImageInElement(element);
+    stealAllOfResource(thief, stolenResource);
+}
+
 /**
  * Parse monopoly card ("stole all of" some resource): [user] used [monopoly icon] & stole all of: [resource icon]
  */
+// TODO Retire this old function
 function parseStoleAllOfMessage(pElement) {
     var textContent = pElement.textContent;
     if (!textContent.includes(stoleAllOfSnippet)) {
@@ -995,7 +1031,9 @@ var ALL_PARSERS = [
     parseBuiltMessage,
     parseBoughtMessage,
     parseTradeBankMessage,
-    parseStoleAllOfMessage,
+    parseMonopoly,
+    // TODO Retire this old "parseStoleAllOfMessage" function
+//    parseStoleAllOfMessage,
     parseDiscardedMessage,
     parseTradeMessage,
     // TODO Retire the old "parseTradedMessage" function
