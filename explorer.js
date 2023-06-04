@@ -31,6 +31,7 @@ var tradeBankTookSnippet = "and took";
 var stoleAllOfSnippet = "stole all of";
 var discardedSnippet = "discarded";
 var tradedWithSnippet = " traded with: ";
+var tradeSnippet = " traded:  for:  with: ";    // Extra spaces for card images
 var tradeWantsToGiveSnippet = "wants to give:";
 var tradeGiveForSnippet = "for:";
 var stoleFromYouSnippet = "stole:";
@@ -63,6 +64,8 @@ var solved_thefts = [];
 // Helpers
 //============================================================
 
+// Strings contained in the resource image file names. Used also in regex so
+// keep simple.
 var resourceCardNames =
 {
     wood: "card_lumber",
@@ -540,9 +543,63 @@ function transferResource(srcPlayer, destPlayer, resource, quantity = 1) {
 }
 
 /**
+ * Parse trade messages.
+ *
+ * Example HTML content:
+ *  Julius traded: <img...><img...> for: <img...> with: Jennie#8540
+ */
+function parseTradeMessage(element)
+{
+    // Identify trading messages
+    var textContent = element.textContent;
+    if (!textContent.includes(tradeSnippet))
+        return;
+
+    // Determine trading players
+    var involvedPlayers = textContent.split(tradeSnippet);
+    var tradingPlayer = involvedPlayers[0];
+    var otherPlayer = involvedPlayers[1];
+
+    // Sanity check
+    if (!resources[tradingPlayer] || !resources[agreeingPlayer]) {
+        console.log("Failed to parse trading player",
+                    tradingPlayer, agreeingPlayer, pElement.textContent,
+                    prevElement.textContent, resources);
+        alert(7);
+        return;
+    }
+
+    // Split HTML at colons to separate sending from receiving resources
+    var split = element.innerHTML.split(":");
+    if (split.length !== 3) // Sanity check
+    {
+        console.log("[ERROR] Expected 3 parts when parsing trading message");
+        alert(7);
+        return;
+    }
+
+    var offer = findAllResourceCardsInHtml(split[1]);
+    var demand = findAllResourceCardsInHtml(split[2]);
+
+    // Output for debugging
+    console.log("[INFO] Player", tradingPlayer,
+                "gave", offer, "in exchange for", demand,
+                "to", otherPlayer);
+    
+    for (var res from resourceTypes)
+    {
+        // Transfer offer
+        transferResource(tradingPlayer, otherPlayer, res, offer[res]);
+        // Transfer demand
+        transferResource(otherPlayer, tradingPlayer, res, demand[res]);
+    }
+}
+
+/**
  * Message T-1: [user1] wants to give: ...[resources] for: ...[resources]
  * Message T: [user1] traded with: [user2]
  */
+// TODO retire this old function
 function parseTradedMessage(pElement, prevElement) {
     var textContent = pElement.textContent;
     if (!textContent.includes(tradedWithSnippet)) {
@@ -891,10 +948,12 @@ var ALL_PARSERS = [
     parseTradeBankMessage,
     parseStoleAllOfMessage,
     parseDiscardedMessage,
-    parseTradedMessage,
-    // TODO These are the old, retired steal parsers
+    parseTradeMessage,
+    // TODO Retire the old "parseTradedMessage" function
+//    parseTradedMessage,
     parseStealFromOtherPlayers, // TODO rename pair to stealKnwon vs. stealUnknown
     parseStealIncludingYou,
+    // TODO These are the old, retired steal parsers
 //    parseStoleFromYouMessage,
 //    parseStoleUnknownMessage,
 ];
