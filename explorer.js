@@ -403,13 +403,17 @@ function parseYearOfPLenty(element)
 
     // Determine resources
     let obtainedResources = findAllResourceCardsInHtml(element.innerHTML);
-    let gotAny = false;
+    var gotAny = false;
     for (const [res, count] of Object.entries(obtainedResources))
     {
         resources[beneficiary][res] += count;
-        if (count != 0) gotAny = true;
+        if (count > 0)
+            gotAny = true;
+        console.log("Got any here:", gotAny);
     }
-    if (gotAny !== false)
+    console.log("[INFO] Player", beneficiary,
+                "player YOP to obtain", obtainedResources);
+    if (gotAny !== true)
     {
         console.log("[ERROR] Expected benefit from YOP for player",
                     "| Got resources:", obtainedResources,
@@ -417,8 +421,6 @@ function parseYearOfPLenty(element)
         alertIf(12);
         return;
     }
-    console.log("[INFO] Player", beneficiary,
-                "player YOP to obtain", obtainedResources);
 }
 
 /**
