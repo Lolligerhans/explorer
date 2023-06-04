@@ -407,9 +407,7 @@ function parseYearOfPLenty(element)
     for (const [res, count] of Object.entries(obtainedResources))
     {
         resources[beneficiary][res] += count;
-        if (count > 0)
-            gotAny = true;
-        console.log("Got any here:", gotAny);
+        if (count > 0) gotAny = true;
     }
     console.log("[INFO] Player", beneficiary,
                 "player YOP to obtain", obtainedResources);
