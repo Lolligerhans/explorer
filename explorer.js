@@ -686,16 +686,20 @@ function parseStealFromOtherPlayers(pElement, prevElement)
 
     // Obtain player names
     var involvedPlayers = textContent
-        .replace(":", "")   // One version has an extra colon
-        .replace(" stole:  from ", " ") // After this only the names are left
+        .replace(/\:/g, "")   // One version has an extra colon
+        .replace(" stole  from ", " ") // After this only the names are left
         .split(" ");
 
     // Replace player name
-    for (p of involvedPlayers)
+    if (involvedPlayers[0] === "You" || involvedPlayers[0] === "you")
     {
-        if (p === "You" || p === "you")
-            p = configPlayerName;
+        involvedPlayers[0] = configPlayerName;
     }
+    if (involvedPlayers[1] === "You" || involvedPlayers[1] === "you")
+    {
+        involvedPlayers[1] = configPlayerName;
+    }
+//    console.log(involvedPlayers);
 
     // Sanity check
     var stealingPlayer = involvedPlayers[0];
