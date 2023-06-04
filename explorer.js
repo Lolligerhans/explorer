@@ -101,8 +101,41 @@ function findSingularResourceImageInElement(element)
     alert(4);
 }
 
+// Matches input string 'html' against assumed-unique strings identifying
+// resource card images.
+function findAllResourceCardsInHtml(html)
+{
+    console.log("Searching for resources in:", html);
+
+    // Match resourceCardNames against string content
+    var foundAny = false;   // For sanity check
+    var cards = {wood: 0, brick: 0, sheep: 0, wheat: 0, ore: 0};
+    for ((res, uniqueResString) of resourceCardNames)
+    {
+        // Count number of occurences of identifying strings like "card_brick"
+        var resourceRegex = new RegExp(uniqueResTring, "g");
+        var count = (html.match(resourceRegex) || []).length;
+        if (count !== 0)
+        {
+            foundAny = true;
+            console.log(" Found ", count, "elements of", res);
+        }
+        cards[res] = count;
+    }
+
+    // Sanity check
+    if (foundAny == false)
+    {
+        console.log("[ERROR] Expected some resource cards in html");
+        alert(9);
+    }
+
+    return cards;
+}
+
 //============================================================
 
+// TODO How to use?
 function addStylesheet()
 {
   var cssId = 'explorerStylesheet';  // you could encode the css path itself to generate id..
