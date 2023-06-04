@@ -110,10 +110,11 @@ function findAllResourceCardsInHtml(html)
     // Match resourceCardNames against string content
     var foundAny = false;   // For sanity check
     var cards = {wood: 0, brick: 0, sheep: 0, wheat: 0, ore: 0};
-    for ((res, uniqueResString) of resourceCardNames)
+    for (const [res, uniqueResString] of Object.entries(resourceCardNames))
+//    for ((res, uniqueResString) of resourceCardNames)
     {
         // Count number of occurences of identifying strings like "card_brick"
-        var resourceRegex = new RegExp(uniqueResTring, "g");
+        var resourceRegex = new RegExp(uniqueResString, "g");
         var count = (html.match(resourceRegex) || []).length;
         if (count !== 0)
         {
@@ -580,6 +581,8 @@ function transferResource(srcPlayer, destPlayer, resource, quantity = 1) {
  *
  * Example HTML content:
  *  Julius traded: <img...><img...> for: <img...> with: Jennie#8540
+ * Note: Contains 3 colons, resulting in 4 sections after split(":"). Middle
+ *       two sections contain the resource imgages.
  */
 function parseTradeMessage(element)
 {
