@@ -956,6 +956,14 @@ function parseStealFromOtherPlayers(pElement, prevElement)
                 "from", targetPlayer);
 }
 
+function parseWin(element)
+{
+    if (element.textContent.includes("won"))
+        return true;
+    else
+        return false;
+}
+
 /**
  * Message T-1: [stealingPlayer] stole [resource] from: [targetPlayer]
  * Message T is NOT: [stealingPlayer] stole: [resource]
@@ -1273,7 +1281,7 @@ function waitForInitialPlacement() {
 //            }
             else
             {
-            	console.log("Initial placement done snippet not found");
+//            	console.log("Initial placement done snippet not found");
             }
         }
     }, 5000);
