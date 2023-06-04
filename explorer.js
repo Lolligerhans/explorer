@@ -12,6 +12,7 @@
 //============================================================
 
 var configPlayerName = "Jennie#8540";
+var configDoAlert = false;
 
 //============================================================
 
@@ -64,6 +65,18 @@ var solved_thefts = [];
 // Helpers
 //============================================================
 
+function alertIf(var message)
+{
+    if (configDoAlert)
+    {
+        alert(message);
+    }
+    else
+    {
+        console.log("[WARNING] Skipping alert(", message, ")");
+    }
+}
+
 // Strings contained in the resource image file names. Used also in regex so
 // keep simple.
 var resourceCardNames =
@@ -98,7 +111,7 @@ function findSingularResourceImageInElement(element)
     
     // Indicate error
     console.log("[ERROR] Expected resource image in element");
-    alert(4);
+    alertIf(4);
 }
 
 // Matches input string 'html' against assumed-unique strings identifying
@@ -128,7 +141,7 @@ function findAllResourceCardsInHtml(html)
     if (foundAny == false)
     {
         console.log("[ERROR] Expected some resource cards in html");
-        alert(9);
+        alertIf(9);
     }
 
     return cards;
@@ -359,7 +372,7 @@ function parseInitialGotMessage(pElement) {
 	    if (gotAny === false)
         {
 	    	console.log("[WARNING] Parsed initial resource message with no resources.");
-            alert(1);
+            alertIf(1);
         }
     }
 }
@@ -399,7 +412,7 @@ function parseGotMessage(pElement) {
 	    if (gotAny === false)
         {
 	    	console.log("[WARNING] Parsed initial resource message with no resources.");
-            alert(1);
+            alertIf(1);
         }
     }
 }
@@ -532,18 +545,19 @@ function parseMonopoly(element)
     }
 
     // Identify thief
-    var thief = textContent.substring(0, textContent.match(" "));
+    var thief = textContent.substring(0, textContent.indexOf(" "));
     
     // Sanity check
     if (!resources[thief])
     {
         console.log("[ERROR] Failed to identify thief for monopoly.",
                     "| Got:", thief, "| from textContent:", textContent);
-        alert(10);
+        alertIf(10);
         return;
     }
 
     let stolenResource = findSingularResourceImageInElement(element);
+    console.log("[INFO] Thief", thief, "monos all", stolenResource);
     stealAllOfResource(thief, stolenResource);
 }
 
@@ -637,7 +651,7 @@ function parseTradeMessage(element)
         console.log("[ERROR] Failed to parse trading players:",
                     tradingPlayer, otherPlayer, "| in the text content:",
                     textContent, "| given resource array:", resources);
-        alert(7);
+        alertIf(7);
         return;
     }
 
@@ -648,7 +662,7 @@ function parseTradeMessage(element)
         console.log("[ERROR] Expected 4 parts when parsing trading message.",
                     "Got:", split);
         console.log(" [NOTE] InnerHTML:", element.innerHTML);
-        alert(7);
+        alertIf(7);
         return;
     }
     var offer = findAllResourceCardsInHtml(split[1]);
@@ -743,7 +757,7 @@ function parseStoleFromYouMessage(pElement, prevElement) {
     var targetPlayer = involvedPlayers[1];
     if (!resources[stealingPlayer] || !resources[targetPlayer]) {
         console.log("[ERROR] Failed to parse player...", stealingPlayer, targetPlayer, resources);
-        alert(2);
+        alertIf(2);
         return;
     }
     var images = collectionToArray(pElement.getElementsByTagName('img'));
@@ -805,7 +819,7 @@ function parseStealIncludingYou(pElement, prevElement)
     {
         console.log("[ERROR] Failed to steal. Invalid parse of player(s):",
                     stealingPlayer, "|", targetPlayer, "|", resources);
-        alert(3);
+        alertIf(3);
         return;
     }
 
@@ -858,7 +872,7 @@ function parseStealFromOtherPlayers(pElement, prevElement)
     {
         console.log("[ERROR] Failed to steal. Invalid parse of players:",
                     stealingPlayer, targetPlayer, resources);
-        alert(5);
+        alertIf(5);
         return;
     }
 
@@ -878,7 +892,7 @@ function parseStealFromOtherPlayers(pElement, prevElement)
     {
         // nothing could have been stolen
         console.log("[ERROR] Parsing hidden steal message but robbed player has nothing");
-        alert(6);
+        alertIf(6);
         return;
     }
     if (resourceTypesPotentiallyStolen.length === 1) {
