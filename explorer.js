@@ -610,37 +610,6 @@ function parseMonopoly(element)
 }
 
 /**
- * Parse monopoly card ("stole all of" some resource): [user] used [monopoly icon] & stole all of: [resource icon]
- */
-// TODO Retire this old function
-function parseStoleAllOfMessage(pElement) {
-    var textContent = pElement.textContent;
-    if (!textContent.includes(stoleAllOfSnippet)) {
-        return;
-    }
-    var player = textContent.split(" ")[0];
-    if (!resources[player]) {
-        console.log("Failed to parse player...", player, resources);
-        return;
-    }
-    var images = collectionToArray(pElement.getElementsByTagName('img'));
-    // there will only be 1 resource icon
-    for (var img of images) {
-        if (img.src.includes("card_wool")) {
-            stealAllOfResource(player, sheep);
-        } else if (img.src.includes("card_lumber")) {
-            stealAllOfResource(player, wood);
-        } else if (img.src.includes("card_brick")) {
-            stealAllOfResource(player, brick);
-        } else if (img.src.includes("card_ore")) {
-            stealAllOfResource(player, ore);
-        } else if (img.src.includes("card_grain")) {
-            stealAllOfResource(player, wheat);
-        }
-    }
-}
-
-/**
  * When the user has to discard cards because of a robber.
  */
 function parseDiscardedMessage(pElement) {
@@ -739,90 +708,6 @@ function parseTradeMessage(element)
         // Transfer demand
 //        transferResource(otherPlayer, tradingPlayer, res, demand[res]);
 //    }
-}
-
-/**
- * Message T-1: [user1] wants to give: ...[resources] for: ...[resources]
- * Message T: [user1] traded with: [user2]
- */
-// TODO retire this old function
-function parseTradedMessage(pElement, prevElement) {
-    var textContent = pElement.textContent;
-    if (!textContent.includes(tradedWithSnippet)) {
-        return;
-    }
-    var tradingPlayer = textContent.split(tradedWithSnippet)[0];
-    var agreeingPlayer = textContent.split(tradedWithSnippet)[1];
-    if (!resources[tradingPlayer] || !resources[agreeingPlayer]) {
-        console.log("Failed to parse player...", tradingPlayer, agreeingPlayer, pElement.textContent, prevElement.textContent, resources);
-        return;
-    }
-    // We have to split on the text, which isn't wrapped in tags, so we parse
-    // innerHTML, which prints the HTML and the text.
-    var innerHTML = prevElement.innerHTML; // on the trade description msg
-    var wantstogive = innerHTML.slice(innerHTML.indexOf(tradeWantsToGiveSnippet),
-                                      innerHTML.indexOf(tradeGiveForSnippet)).split("<img");
-    var givefor = innerHTML.slice(innerHTML.indexOf(tradeGiveForSnippet)).split("<img");
-    for (var imgStr of wantstogive) {
-        if (imgStr.includes("card_wool")) {
-            transferResource(tradingPlayer, agreeingPlayer, sheep);
-        } else if (imgStr.includes("card_lumber")) {
-            transferResource(tradingPlayer, agreeingPlayer, wood);
-        } else if (imgStr.includes("card_brick")) {
-            transferResource(tradingPlayer, agreeingPlayer, brick);
-        } else if (imgStr.includes("card_ore")) {
-            transferResource(tradingPlayer, agreeingPlayer, ore);
-        } else if (imgStr.includes("card_grain")) {
-            transferResource(tradingPlayer, agreeingPlayer, wheat);
-        }
-    }
-    for (var imgStr of givefor) {
-        if (imgStr.includes("card_wool")) {
-            transferResource(agreeingPlayer, tradingPlayer, sheep);
-        } else if (imgStr.includes("card_lumber")) {
-            transferResource(agreeingPlayer, tradingPlayer, wood);
-        } else if (imgStr.includes("card_brick")) {
-            transferResource(agreeingPlayer, tradingPlayer, brick);
-        } else if (imgStr.includes("card_ore")) {
-            transferResource(agreeingPlayer, tradingPlayer, ore);
-        } else if (imgStr.includes("card_grain")) {
-            transferResource(agreeingPlayer, tradingPlayer, wheat);
-        }
-    }
-}
-
-/**
- * Message T-1: [stealingPlayer] stole [resource] from: [targetPlayer]
- * Message T: [stealingPlayer] stole: [resource]
- */
-// TODO retire this old function
-function parseStoleFromYouMessage(pElement, prevElement) {
-    var textContent = pElement.textContent;
-    if (!textContent.includes(stoleFromYouSnippet)) {
-        return;
-    }
-    var involvedPlayers = prevElement.textContent.replace(stoleFromSnippet, " ").split(" ");
-    var stealingPlayer = involvedPlayers[0];
-    var targetPlayer = involvedPlayers[1];
-    if (!resources[stealingPlayer] || !resources[targetPlayer]) {
-        console.log("[ERROR] Failed to parse player...", stealingPlayer, targetPlayer, resources);
-        alertIf(2);
-        return;
-    }
-    var images = collectionToArray(pElement.getElementsByTagName('img'));
-    for (var img of images) {
-        if (img.src.includes("card_wool")) {
-            transferResource(targetPlayer, stealingPlayer, sheep);
-        } else if (img.src.includes("card_lumber")) {
-            transferResource(targetPlayer, stealingPlayer, wood);
-        } else if (img.src.includes("card_brick")) {
-            transferResource(targetPlayer, stealingPlayer, brick);
-        } else if (img.src.includes("card_ore")) {
-            transferResource(targetPlayer, stealingPlayer, ore);
-        } else if (img.src.includes("card_grain")) {
-            transferResource(targetPlayer, stealingPlayer, wheat);
-        }
-    }
 }
 
 // Parse steal including "you" or "You"
@@ -969,59 +854,6 @@ function parseWin(element)
 }
 
 /**
- * Message T-1: [stealingPlayer] stole [resource] from: [targetPlayer]
- * Message T is NOT: [stealingPlayer] stole: [resource]
- */
-// TODO Reture this old function
-function parseStoleUnknownMessage(pElement, prevElement) {
-    if (!prevElement) {
-        return;
-    }
-    var messageT = pElement.textContent;
-    var messageTMinus1 = prevElement.textContent;
-    var matches = !messageT.includes(stoleFromYouSnippet) && messageTMinus1.includes(stoleFromSnippet);
-    if (!matches) {
-        return;
-    }
-    // figure out the 2 players
-    var involvedPlayers = prevElement.textContent.replace(stoleFromSnippet, " ").split(" ");
-    var stealingPlayer = involvedPlayers[0];
-    var targetPlayer = involvedPlayers[1];
-    if (!resources[stealingPlayer] || !resources[targetPlayer]) {
-        console.log("Failed to parse player...", stealingPlayer, targetPlayer, resources);
-        return;
-    }
-
-    // for the player being stolen from, (-1) on all resources that are non-zero
-    // for the player receiving, (+1) for all resources that are non-zero FOR THE OTHER PLAYER
-    // record the unknown and wait for it to surface
-    theft = {
-        who: {
-            stealingPlayer,
-            targetPlayer,
-        },
-        what: {}
-    };
-    for (var resourceType of resourceTypes) {
-        if (resources[targetPlayer][resourceType] > 0) {
-            theft.what[resourceType] = 1;
-        }
-    }
-    var resourceTypesPotentiallyStolen = Object.keys(theft.what);
-    if (resourceTypesPotentiallyStolen.length === 0) {
-        // nothing could have been stolen
-        return;
-    }
-    if (resourceTypesPotentiallyStolen.length === 1) {
-        // only 1 resource could have been stolen, so it's not an unknown
-        transferResource(targetPlayer, stealingPlayer, resourceTypesPotentiallyStolen[0]);
-    } else {
-        // we can't be sure, so record the unknown
-        thefts.push(theft);
-    }
-}
-
-/**
  * See if thefts can be solved based on current resource count.
  * Rules:
  *
@@ -1104,17 +936,10 @@ var ALL_PARSERS = [
     parseTradeBankMessage,
     parseYearOfPLenty,
     parseMonopoly,
-    // TODO Retire this old "parseStoleAllOfMessage" function
-//    parseStoleAllOfMessage,
     parseDiscardedMessage,
     parseTradeMessage,
-    // TODO Retire the old "parseTradedMessage" function
-//    parseTradedMessage,
     parseStealFromOtherPlayers, // TODO rename pair to stealKnwon vs. stealUnknown
     parseStealIncludingYou,
-    // TODO These are the old, retired steal parsers
-//    parseStoleFromYouMessage,
-//    parseStoleUnknownMessage,
 ];
 
 /**
