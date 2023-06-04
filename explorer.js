@@ -644,9 +644,11 @@ function parseTradedMessage(pElement, prevElement) {
         console.log("Failed to parse player...", tradingPlayer, agreeingPlayer, pElement.textContent, prevElement.textContent, resources);
         return;
     }
-    // We have to split on the text, which isn't wrapped in tags, so we parse innerHTML, which prints the HTML and the text.
+    // We have to split on the text, which isn't wrapped in tags, so we parse
+    // innerHTML, which prints the HTML and the text.
     var innerHTML = prevElement.innerHTML; // on the trade description msg
-    var wantstogive = innerHTML.slice(innerHTML.indexOf(tradeWantsToGiveSnippet), innerHTML.indexOf(tradeGiveForSnippet)).split("<img");
+    var wantstogive = innerHTML.slice(innerHTML.indexOf(tradeWantsToGiveSnippet),
+                                      innerHTML.indexOf(tradeGiveForSnippet)).split("<img");
     var givefor = innerHTML.slice(innerHTML.indexOf(tradeGiveForSnippet)).split("<img");
     for (var imgStr of wantstogive) {
         if (imgStr.includes("card_wool")) {
