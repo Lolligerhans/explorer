@@ -597,23 +597,24 @@ function parseTradeMessage(element)
     var otherPlayer = involvedPlayers[1];
 
     // Sanity check
-    if (!resources[tradingPlayer] || !resources[agreeingPlayer]) {
-        console.log("Failed to parse trading player",
-                    tradingPlayer, agreeingPlayer, pElement.textContent,
-                    prevElement.textContent, resources);
+    if (!resources[tradingPlayer] || !resources[otherPlayer]) {
+        console.log("[ERROR] Failed to parse trading players:",
+                    tradingPlayer, otherPlayer, "| in the text content:",
+                    textContent, "| given resource array:", resources);
         alert(7);
         return;
     }
 
     // Split HTML at colons to separate sending from receiving resources
     var split = element.innerHTML.split(":");
-    if (split.length !== 3) // Sanity check
+    if (split.length !== 4) // Sanity check
     {
-        console.log("[ERROR] Expected 3 parts when parsing trading message");
+        console.log("[ERROR] Expected 4 parts when parsing trading message.",
+                    "Got:", split);
+        console.log(" [NOTE] InnerHTML:", element.innerHTML);
         alert(7);
         return;
     }
-
     var offer = findAllResourceCardsInHtml(split[1]);
     var demand = findAllResourceCardsInHtml(split[2]);
 
@@ -622,13 +623,23 @@ function parseTradeMessage(element)
                 "gave", offer, "in exchange for", demand,
                 "to", otherPlayer);
     
-    for (var res from resourceTypes)
+    // Transfer resources from offer and demand
+    for (const [res, count] of Object.entries(offer))
     {
-        // Transfer offer
-        transferResource(tradingPlayer, otherPlayer, res, offer[res]);
-        // Transfer demand
-        transferResource(otherPlayer, tradingPlayer, res, demand[res]);
+        transferResource(tradingPlayer, otherPlayer, res, count);
     }
+    for (const [res, count] of Object.entries(demand))
+    {
+        transferResource(otherPlayer, tradingPlayer, res, count);
+    }
+
+//    for (var res of resourceTypes)
+//    {
+        // Transfer offer
+//        transferResource(tradingPlayer, otherPlayer, res, offer[res]);
+        // Transfer demand
+//        transferResource(otherPlayer, tradingPlayer, res, demand[res]);
+//    }
 }
 
 /**
@@ -1017,7 +1028,7 @@ function parseLatestMessages() {
     }
 
     ALL_PARSERS.forEach(parser => newMessages.forEach((msg, idx) => {
-        console.log("Parsing message:", msg.textContent);
+//        console.log("Parsing message:", msg.textContent);
         var prevMessage = idx > 0 ? newMessages[idx - 1] : allMessages[MSG_OFFSET - 1];
         parser(msg, prevMessage);
     }));
