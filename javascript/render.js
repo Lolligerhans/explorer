@@ -248,6 +248,7 @@ class Render
         //----------------------------------------------------------------------
         // Header row - one column per resource, plus player column
         //----------------------------------------------------------------------
+        const fakeRes = Multiverse.resources.slice(0, 5);
 
         let header = tbl.createTHead();
         header.className = "explorer-tbl-header";
@@ -260,7 +261,7 @@ class Render
         // icon.src = `${theBrowser.runtime.getURL("assets/coconut_32.png")}`;
         // playerHeaderCell.appendChild(icon);
         // playerHeaderCell.appendChild(text);
-        for (let i = 0; i < Multiverse.resources.length; i++)
+        for (let i = 0; i < fakeRes.length; i++)
         {
             let resourceHeaderCell = headerRow.insertCell(i + 1);
             resourceHeaderCell.addEventListener("click", this.context.recoverCardsCallback, false);
@@ -268,7 +269,7 @@ class Render
         }
         for (const [i, name] of Object.keys(Multiverse.costs).entries())
         {
-            let headerCell = headerRow.insertCell(i + 1 + Multiverse.resources.length);
+            let headerCell = headerRow.insertCell(i + 1 + fakeRes.length);
             headerCell.className = "explorer-tbl-cell";
             headerCell.innerHTML = this.iconElements[name];
 
@@ -340,7 +341,7 @@ class Render
             playerRowCell.className = "explorer-tbl-player-col-cell";   // Same as for rob table
             playerRowCell.addEventListener("click", measureTotalCountFunction.bind(null, player), false);
             // Resources
-            for (let j = 0; j < Multiverse.resources.length; j++)
+            for (let j = 0; j < fakeRes.length; j++)
             {
                 const res = Multiverse.getResourceName(j);
                 let cell = row.insertCell(j + 1);
@@ -348,7 +349,7 @@ class Render
                 cell.addEventListener("click", guessCardCountFunction.bind(null, player, j, this.manyWorlds.worldGuessAndRange[player][res][2]), false);
             }
             // Buildings
-            let j = Multiverse.resources.length + 1;
+            let j = fakeRes.length + 1;
             let addBuildFunc = b =>
             {
                 let cell = row.insertCell(j);
@@ -414,12 +415,13 @@ class Render
 
     fillResourceTable(tbl)
     {
+        const fakeRes = Multiverse.resources.slice(0, 5);
         // Header row - one column per resource, plus player column
         let header = tbl.tHead;
         let headerRow = header.rows[0];
         let playerHeaderCell = headerRow.cells[0];
         playerHeaderCell.textContent = `${this.manyWorlds.worldCount()} 🌎`;
-        for (let i = 0; i < Multiverse.resources.length; i++)
+        for (let i = 0; i < fakeRes.length; i++)
         { // TODO use spans to separate number from icon
             let resourceType = Multiverse.getResourceName(i);
             let resourceHeaderCell = headerRow.cells[i + 1];
@@ -436,7 +438,7 @@ class Render
             let row = tblBody.rows[i];
             let playerRowCell = row.cells[0];
             playerRowCell.innerHTML = this.renderPlayerCell(player);
-            for (let j = 0; j < Multiverse.resources.length; j++)
+            for (let j = 0; j < fakeRes.length; j++)
             {
                 const res = Multiverse.getResourceName(j);
                 let cell = row.cells[j + 1];
@@ -453,7 +455,7 @@ class Render
                 //    cell.style.background = shadowColour;
             }
             // Copy the cell-adding for resource
-            let j = Multiverse.resources.length + 1;
+            let j = fakeRes.length + 1;
             let addBuildFunc = b =>
             {
                 const chance = this.manyWorlds.mwBuildsProb[player][b];

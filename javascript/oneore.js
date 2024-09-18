@@ -84,7 +84,7 @@ maxIndex: -1,
 
 // Because card tracking is much more complex than roll and rob counting, we
 // separate card tracking into manyworlds.js, providing the ManyWorlds class.
-worlds: null, // ManyWorlds Object
+// worlds: null, // ManyWorlds Object
 multiverse: null, // Multiverse Object
 // The tracker object collects all the simple tracker data, like roll counting.
 tracker: null, // Track Object
@@ -208,7 +208,8 @@ generateEmptyResourceList: function(playerNameList)
 {
     let res = {};
     for (const playerName of playerNameList)
-        res[playerName] = deepCopy(mw.emptyResourcesByName);
+        res[playerName] = {};
+        // res[playerName] = deepCopy(mw.emptyResourcesByName);
     return res;
 },
 
@@ -288,7 +289,7 @@ resetState: function()
     twosheep.players = null;
     twosheep.player_colours = null;
     twosheep.icons = null;
-    twosheep.worlds = null;
+    // twosheep.worlds = null;
     twosheep.multiverse = null;
     twosheep.tracker = null;
     twosheep.render = null;
@@ -301,13 +302,7 @@ resetState: function()
 findLogElement: function()
 {
     console.assert(!twosheep.logElement);
-    const fadePanels = document.getElementsByClassName("fadePanel");
-    if (!fadePanels)
-    {
-        //console.debug("• No fadePanel found");
-        return false;
-    }
-    twosheep.logElement = fadePanels[fadePanels.length - 1];
+    twosheep.logElement = document.querySelector(".eventsTab");
     if (!twosheep.logElement)
     {
         //console.debug("• No logElement found");
@@ -355,14 +350,13 @@ waitForInitialPlacement: function()
     twosheep.getNewMessages(); // Advances MSG_OFFSET
     // Technically 28 is the last placement. We wait 29 to include the first roll because we
     // reset to that index later.
-    if (twosheep.MSG_OFFSET >= 29) // TODO is too large
-    {
-        twosheep.MSG_OFFSET = twosheep.findFirstRollIndex(twosheep.getAllMessages());
-        console.log("◦ Completed initial placement");
-        console.info("◦ MSG_OFFSET === (", twosheep.MSG_OFFSET, ")");
-        return true;
-    }
-    return false;
+    if (twosheep.MSG_OFFSET < 30) // TODO is too large
+        return false;
+
+    twosheep.MSG_OFFSET = twosheep.findFirstRollIndex(twosheep.getAllMessages());
+    console.log("◦ Completed initial placement");
+    console.info("◦ MSG_OFFSET === (", twosheep.MSG_OFFSET, ")");
+    return true;
 },
 
 // Used with 'setDoInverval' by startTracker.
@@ -455,8 +449,8 @@ initializeTracker: function()
     console.log("◦ Initializing tracking");
     const noResources = twosheep.generateEmptyResourceList(twosheep.players);
 
-    twosheep.worlds = new ManyWorlds();
-    twosheep.worlds.initWorlds(noResources);
+    // twosheep.worlds = new ManyWorlds();
+    // twosheep.worlds.initWorlds(noResources);
     twosheep.multiverse = new Multiverse();
     twosheep.multiverse.initWorlds(noResources);
     twosheep.tracker = new Track();
@@ -491,7 +485,7 @@ initializeTracker: function()
 findInitialResources: function()
 {
     //console.debug("◦ Setting initial resources");
-    console.assert(twosheep.MSG_OFFSET >= 29); // Sanity check: waited for initial placements
+    console.assert(twosheep.MSG_OFFSET >= 29, "Expecting MSG_OFFSET ${MSG_OFFSET} >= 29"); // Sanity check: waited for initial placements
     const allMessages = twosheep.getAllMessages();
     console.assert(allMessages.length > 26);
     for (let i = 0; i < twosheep.MSG_OFFSET; ++i)
@@ -504,7 +498,7 @@ findInitialResources: function()
         const name = nameElement.textContent;
         const resources = twosheep.extractResourcesFromLogMessage(msg.innerHTML);
         console.assert(name !== null);
-        twosheep.worlds.mwTransformSpawn(name, mw.generateFullSliceFromNames(resources));
+        // twosheep.worlds.mwTransformSpawn(name, mw.generateFullSliceFromNames(resources));
         console.log(`▶️ %c${name}%c ${resourcesAsUtf8(resources)}`, twosheep.consoleCss(name), "");
         //console.debug(`• Set initial resources for ${name} to`, resources);
         twosheep.multiverse.mwTransformSpawn(name, Multiverse.asSlice(resources));
@@ -602,7 +596,8 @@ mainLoop: function(continueIf)
     }
     else
     {
-        console.info("🧭", `Running main loop. Current index: ${twosheep.activeIndex}`);
+        // console.info("🧭", `Running main loop. Current index: ${twosheep.activeIndex}`);
+        console.info("🧭");
     }
     if (config.useTimer) console.time("mainLoop");
 
@@ -683,7 +678,7 @@ recoverCards: function()
         const count = prompt(`🩹 ${player} number of cards:`, 0);
         counts[player] = count;
     }
-    twosheep.worlds.mwCardRecovery(counts);
+    // twosheep.worlds.mwCardRecovery(counts);
     twosheep.multiverse.mwCardRecovery(counts);
 
     // The MW state changes despite no message sent, so force update display
@@ -776,7 +771,7 @@ parsers:
         return false;
     },
 
-    fallback: function(msg, idx)
+    fallback: function(_msg, _idx)
     {
         //console.debug(`❌ Unidentified: Message ${idx} »${msg.textContent}«`);
         return false;
@@ -839,8 +834,8 @@ parsers:
         const demand = twosheep.extractResourcesFromLogMessage(split[2]);
         console.log(`%c${player}%c ➡️ ${resourcesAsUtf8(offer)} ⇄️ ${resourcesAsUtf8(demand)}`, twosheep.consoleCss(player), "");
 
-        const offerSlice = mw.generateWorldSlice(offer);
-        twosheep.worlds.mwCollapseMin(player, offerSlice);
+        // const offerSlice = mw.generateWorldSlice(offer);
+        // twosheep.worlds.mwCollapseMin(player, offerSlice);
         twosheep.multiverse.mwCollapseMin(player, Multiverse.asSlice(offer));
 
         return true;
@@ -861,7 +856,7 @@ parsers:
         //console.debug("• Trade counter:", player, "<-", demand, "->", offer);
         const asSlice = mw.generateWorldSlice(offer);
 
-        twosheep.worlds.mwCollapseMin(player, asSlice);
+        // twosheep.worlds.mwCollapseMin(player, asSlice);
         twosheep.multiverse.mwCollapseMin(player, Multiverse.asSlice(offer));
 
         return true;
@@ -876,11 +871,11 @@ parsers:
         if (!verifyPlayers(twosheep.players, player)) return false; // Sanity check
 
         const obtainedResources = twosheep.extractResourcesFromLogMessage(element.innerHTML);
-        let asSlice = mw.generateWorldSlice(obtainedResources);
+        // let asSlice = mw.generateWorldSlice(obtainedResources);
         console.log(`%c${player}%c ← ${resourcesAsUtf8(obtainedResources)}`, twosheep.consoleCss(player), "");
         //console.log("Got resources:", player, "<-", obtainedResources);
 
-        twosheep.worlds.mwTransformSpawn(player, asSlice);
+        // twosheep.worlds.mwTransformSpawn(player, asSlice);
         twosheep.multiverse.mwTransformSpawn(player, Multiverse.asSlice(obtainedResources));
         twosheep.multiverse.printWorlds();
 
@@ -923,13 +918,15 @@ parsers:
                 return true;
             }
         }
-        const buildResources = mw.generateFullNamesFromSlice(mw.mwBuilds[building]);
-        console.log(`${utf8Symbols[building]} %c${player}%c → ${resourcesAsUtf8(buildResources)}`, twosheep.consoleCss(player), "");
+        // const buildResources = mw.generateFullNamesFromSlice(mw.mwBuilds[building]);
+        const costs = Multiverse.costs[building];
+        const asNames = Multiverse.asNames(costs);
+        console.log(`${utf8Symbols[building]} %c${player}%c → ${resourcesAsUtf8(asNames)}`, twosheep.consoleCss(player), "");
         //logs("[INFO] Built:", player, buildResources);
 
-        const asSlice = -mw.mwBuilds[building];
-        twosheep.worlds.mwTransformSpawn(player, asSlice);
-        twosheep.multiverse.mwTransformSpawn(player, Multiverse.costs[building]);
+        // const asSlice = -mw.mwBuilds[building];
+        // twosheep.worlds.mwTransformSpawn(player, asSlice);
+        twosheep.multiverse.mwTransformSpawn(player, costs);
         twosheep.multiverse.printWorlds();
 
         return true;
@@ -945,11 +942,13 @@ parsers:
         const player = textContent.split(" ")[0];
         if (!verifyPlayers(twosheep.players, player)) return false; // Sanity check
 
-        const devCardResources = mw.generateFullNamesFromSlice(mw.mwBuilds.devcard);
-        console.log(`🂠 %c${player}%c → ${resourcesAsUtf8(devCardResources)}`, twosheep.consoleCss(player), "");
+        const costs = Multiverse.costs.devcard;
+        const asNames = Multiverse.asNames(costs);
+        // const devCardResources = mw.generateFullNamesFromSlice(mw.mwBuilds.devcard);
+        console.log(`🂠 %c${player}%c → ${resourcesAsUtf8(asNames)}`, twosheep.consoleCss(player), "");
 
-        const asSlice = -mw.mwBuilds.devcard;
-        twosheep.worlds.mwTransformSpawn(player, asSlice);
+        // const asSlice = -mw.mwBuilds.devcard;
+        // twosheep.worlds.mwTransformSpawn(player, asSlice);
         twosheep.multiverse.mwTransformSpawn(player, Multiverse.costs.devcard);
         twosheep.multiverse.printWorlds();
 
@@ -967,11 +966,11 @@ parsers:
         console.assert(innerHTML.length === 2);
         const gave = twosheep.extractResourcesFromLogMessage(innerHTML[0]);
         const took = twosheep.extractResourcesFromLogMessage(innerHTML[1]);
-        const giveSlice = mw.generateWorldSlice(gave);
-        const takeSlice = mw.generateWorldSlice(took);
+        // const giveSlice = mw.generateWorldSlice(gave);
+        // const takeSlice = mw.generateWorldSlice(took);
         console.log(`🏦 %c${player}%c ${resourcesAsUtf8(gave)} ↔ ${resourcesAsUtf8(took)}`, twosheep.consoleCss(player), "");
 
-        twosheep.worlds.mwTransformSpawn(player, takeSlice - giveSlice);
+        // twosheep.worlds.mwTransformSpawn(player, takeSlice - giveSlice);
         twosheep.multiverse.mwTransformSpawn(player,
             Multiverse.sliceSubtract(
                 Multiverse.asSlice(took),
@@ -1061,10 +1060,10 @@ parsers:
 
         // Since twosheep tells the resources in detail, trade them over
         // individually, then collapse to 0 left over.
-        let collapseResources = deepCopy(mw.maxResourcesByNameWithU);
-        collapseResources[stolenResource] = 0;
-        const collapseSlice = mw.generateWorldSlice(collapseResources);
-        console.assert(!mw.sliceHasNegative(collapseSlice));
+        // let collapseResources = deepCopy(mw.maxResourcesByNameWithU);
+        // collapseResources[stolenResource] = 0;
+        // const collapseSlice = mw.generateWorldSlice(collapseResources);
+        // console.assert(!mw.sliceHasNegative(collapseSlice));
         // FIXME
         //  Currently WE HAVE TO have the unknown resource in the dummyDemand,
         //  because the transformtradebyname function iterates unknown resources
@@ -1074,27 +1073,29 @@ parsers:
         //
         //  Start be removing (or at least renaming) the emtpy resources
         //  constants without "unknown".
-        const dummyDemand = deepCopy(mw.emptyResourcesByNameWithU);
+        // const dummyDemand = deepCopy(mw.emptyResourcesByNameWithU);
         for (const trade of trades)
         {
-            twosheep.worlds.transformTradeByName
-            (
-                trade.victim,
-                thief,
-                trade.resources,
-                dummyDemand,
-                true // skip nonzero check (for dummyDemand)
-            );
-            twosheep.worlds.mwCollapseMax(trade.victim, collapseSlice);
+            // twosheep.worlds.transformTradeByName
+            // (
+            //     trade.victim,
+            //     thief,
+            //     trade.resources,
+            //     dummyDemand,
+            //     true // skip nonzero check (for dummyDemand)
+            // );
+            // twosheep.worlds.mwCollapseMax(trade.victim, collapseSlice);
             twosheep.multiverse.transformTradeByName
             (
                 trade.victim,
                 thief,
                 trade.resources,
-                dummyDemand, // Using MW resource here but are by name
+                {}, // Using MW resource here but are by name
                 true
             )
-            twosheep.multiverse.mwCollapseMax(trade.victim, Multiverse.asSlice(collapseResources));
+            let max = {wood:19, brick:19, sheep:19, wheat:19, ore:19, "unknown":95};
+
+            twosheep.multiverse.mwCollapseMax(trade.victim, Multiverse.asSlice(max));
         }
 
         return true;
@@ -1118,12 +1119,12 @@ parsers:
         if (!verifyPlayers(twosheep.players, player)) return false; // Sanity check
 
         const discarded = twosheep.extractResourcesFromLogMessage(element.innerHTML);
-        const discardedCardsAsSlie = mw.generateWorldSlice(discarded);
+        // const discardedCardsAsSlie = mw.generateWorldSlice(discarded);
         console.log(`🗑 %c${player}%c → ${resourcesAsUtf8(discarded)}`, twosheep.consoleCss(player), "");
         //logs("[INFO] Discarded:", player, "->", discarded);
 
-        twosheep.worlds.mwCollapseMinTotal(player); // Total can be unknown to MW after monopoly
-        twosheep.worlds.mwTransformSpawn(player, -discardedCardsAsSlie);
+        // twosheep.worlds.mwCollapseMinTotal(player); // Total can be unknown to MW after monopoly
+        // twosheep.worlds.mwTransformSpawn(player, -discardedCardsAsSlie);
         twosheep.multiverse.mwCollapseTotal(player, n => n >= 8);
         twosheep.multiverse.mwTransformSpawn(player,
             Multiverse.sliceNegate(
@@ -1162,7 +1163,7 @@ parsers:
         console.log(`%c${tradingPlayer}%c ${resourcesAsUtf8(offer)} ↔️ ${resourcesAsUtf8(demand)} %c${otherPlayer}%c`, twosheep.consoleCss(tradingPlayer), "", twosheep.consoleCss(otherPlayer), "");
         //logs("[INFO] Trade:", offer, tradingPlayer, "--> | <--", otherPlayer, demand);
 
-        twosheep.worlds.transformTradeByName(tradingPlayer, otherPlayer, offer, demand);
+        // twosheep.worlds.transformTradeByName(tradingPlayer, otherPlayer, offer, demand);
         twosheep.multiverse.transformTradeByName(tradingPlayer, otherPlayer, offer, demand);
         twosheep.multiverse.printWorlds();
 
@@ -1200,25 +1201,25 @@ parsers:
         const resources = twosheep.extractResourcesFromLogMessage(element.innerHTML);
         const stolenResourceType = Object.entries(resources).reduce(
             (res, [key, value]) => value !== 0 ? key : res, null);
-        const asSlice = mw.generateFullSliceFromNames(resources);
-        console.assert(mw.getResourceSumOfSlice(asSlice) === 1);
+        // const asSlice = mw.generateFullSliceFromNames(resources);
+        // console.assert(mw.getResourceSumOfSlice(asSlice) === 1);
 
         twosheep.tracker.addRob(stealingPlayer, targetPlayer);
         if (resources.unknown === 1)
         {
             console.log(`🥷 %c${stealingPlayer}%c ← 🂠 %c${targetPlayer}%c`, twosheep.consoleCss(stealingPlayer), "", twosheep.consoleCss(targetPlayer), "");
             console.info("• Steal (unknown):", targetPlayer, "->", stealingPlayer);
-            twosheep.worlds.branchSteal(targetPlayer, stealingPlayer);
+            // twosheep.worlds.branchSteal(targetPlayer, stealingPlayer);
             twosheep.multiverse.branchSteal(targetPlayer, stealingPlayer);
             twosheep.multiverse.printWorlds();
         }
         else
         {
-            const stolenResourceIndex = mw.worldResourceIndex(stolenResourceType);
+            // const stolenResourceIndex = mw.worldResourceIndex(stolenResourceType);
             console.log(`🥷 %c${stealingPlayer}%c ← ${resourcesAsUtf8(resources)} %c${targetPlayer}%c`, twosheep.consoleCss(stealingPlayer), "", twosheep.consoleCss(targetPlayer), "");
             console.info("• Steal (known):", targetPlayer, "->", stealingPlayer, "(", resources, ")");
-            twosheep.worlds.collapseAsRandom(targetPlayer, stolenResourceIndex);
-            twosheep.worlds.transformExchange(targetPlayer, stealingPlayer, asSlice);
+            // twosheep.worlds.collapseAsRandom(targetPlayer, stolenResourceIndex);
+            // twosheep.worlds.transformExchange(targetPlayer, stealingPlayer, asSlice);
             twosheep.multiverse.collapseAsRandom(targetPlayer,
                 Multiverse.getResourceIndex(stolenResourceType));
             twosheep.multiverse.mwTransformExchange(targetPlayer, stealingPlayer,
