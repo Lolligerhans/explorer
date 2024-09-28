@@ -1,6 +1,9 @@
 <!-- markdownlint-disable line-length -->
 # ![Icon](assets/coconut_32.png?raw=true) Correctly correlated Colonist card chance counter
 
+> [!IMPORTANT]
+> Moved to [Cocaco](https://github.com/Lolligerhans/cocaco)
+
 ![Outdated Screenshot](assets/screenshot.png?raw=true)
 
 ## Features
